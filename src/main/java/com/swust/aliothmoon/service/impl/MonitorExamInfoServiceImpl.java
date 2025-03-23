@@ -1,0 +1,18 @@
+package com.swust.aliothmoon.service.impl;
+
+import com.mybatisflex.spring.service.impl.ServiceImpl;
+import com.swust.aliothmoon.entity.MonitorExamInfo;
+import com.swust.aliothmoon.mapper.MonitorExamInfoMapper;
+import com.swust.aliothmoon.service.MonitorExamInfoService;
+import org.springframework.stereotype.Service;
+
+/**
+ *  服务层实现。
+ *
+ * @author Alioth
+ * @since 2025-03-24
+ */
+@Service
+public class MonitorExamInfoServiceImpl extends ServiceImpl<MonitorExamInfoMapper, MonitorExamInfo>  implements MonitorExamInfoService{
+
+}
