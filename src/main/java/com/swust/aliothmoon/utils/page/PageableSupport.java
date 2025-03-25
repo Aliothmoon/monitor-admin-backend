@@ -67,7 +67,8 @@ public class PageableSupport {
             metadata.setPageNum(Convert.toInt(page, 1))
                     .setPageSize(Convert.toInt(size, 10))
                     .setOrderByColumn(request.getParameter(ORDER_BY_COLUMN))
-                    .setReasonable(Convert.toBool(request.getParameter(REASONABLE))).setIsAsc(request.getParameter(IS_ASC));
+                    .setReasonable(Convert.toBool(request.getParameter(REASONABLE)))
+                    .setIsAsc(request.getParameter(IS_ASC));
         }
         return metadata;
 
