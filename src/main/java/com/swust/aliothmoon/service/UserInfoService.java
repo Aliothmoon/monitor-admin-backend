@@ -5,6 +5,7 @@ import com.swust.aliothmoon.model.user.LoggedInUserInfo;
 import com.swust.aliothmoon.model.user.LoginTuple;
 
 public interface UserInfoService {
+
     R<String> login(LoginTuple info);
 
     boolean logout();

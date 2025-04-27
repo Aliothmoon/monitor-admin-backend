@@ -1,15 +1,24 @@
 package com.swust.aliothmoon.controller.user;
 
 import com.mybatisflex.core.paginate.Page;
+import com.swust.aliothmoon.constant.UserRoleConstant;
+import com.swust.aliothmoon.context.UserInfoContext;
 import com.swust.aliothmoon.define.R;
 import com.swust.aliothmoon.define.TableDataInfo;
 import com.swust.aliothmoon.entity.MonitorUser;
+import com.swust.aliothmoon.entity.MonitorUserProfile;
 import com.swust.aliothmoon.model.dto.PageInfo;
+import com.swust.aliothmoon.model.user.LoggedInUserInfo;
+import com.swust.aliothmoon.service.MonitorUserProfileService;
 import com.swust.aliothmoon.service.MonitorUserService;
+import com.swust.aliothmoon.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
+
+import static com.swust.aliothmoon.utils.MiscUtils.eq;
 
 /**
  *  MonitorUserController
@@ -23,6 +32,9 @@ public class MonitorUserController {
 
     @Autowired
     private MonitorUserService monitorUserService;
+
+    @Autowired
+    private MonitorUserProfileService monitorUserProfileService;
 
     /**
      * 添加。
@@ -46,37 +58,6 @@ public class MonitorUserController {
         return R.ok(monitorUserService.removeById(id));
     }
 
-    /**
-     * 根据主键更新。
-     *
-     * @param monitorUser
-     * @return {@code true} 更新成功，{@code false} 更新失败
-     */
-    @PutMapping("update")
-    public R<Boolean> update(@RequestBody MonitorUser monitorUser) {
-        return R.ok(monitorUserService.updateById(monitorUser));
-    }
-
-    /**
-     * 查询所有。
-     *
-     * @return 所有数据
-     */
-    @GetMapping("list")
-    public List<MonitorUser> list() {
-        return monitorUserService.list();
-    }
-
-    /**
-     * 根据主键获取详细信息。
-     *
-     * @param id 主键
-     * @return 详情
-     */
-    @GetMapping("getInfo/{id}")
-    public MonitorUser getInfo(@PathVariable Integer id) {
-        return monitorUserService.getById(id);
-    }
 
     /**
      * 分页查询。
@@ -94,4 +75,89 @@ public class MonitorUserController {
         return monitorUserService.getPageData(page);
     }
 
+    /**
+     * 根据条件获取分页数据
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @param username 用户名（可选）
+     * @param account 账号（可选）
+     * @return 分页数据
+     */
+    @GetMapping("getMonitorUserPageData")
+    public TableDataInfo<MonitorUser> getMonitorUserPageData(
+            @RequestParam int pageNum,
+            @RequestParam int pageSize,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String account) {
+        return monitorUserService.getPageData(pageNum, pageSize, username, account);
+    }
+
+    /**
+     * 保存监考员信息
+     *
+     * @param monitorUser 监考员信息
+     * @return 保存结果
+     */
+    @PostMapping("saveMonitorUser")
+    @Transactional
+    public boolean saveMonitorUser(@RequestBody MonitorUser monitorUser) {
+        // 设置创建和更新时间
+        LocalDateTime now = LocalDateTime.now();
+        monitorUser.setCreatedAt(now);
+        monitorUser.setUpdatedAt(now);
+
+        // 默认角色为监考员
+        monitorUser.setRoleId(UserRoleConstant.INVIGILATOR);
+
+        // 加密密码
+        monitorUser.setPassword(CryptoUtils.hashPassword(monitorUser.getPassword()));
+
+        // 保存用户信息
+        boolean saveSuccess = monitorUserService.save(monitorUser);
+
+        // 如果保存成功并且用户ID不为空，创建用户配置文件
+        if (saveSuccess && monitorUser.getUserId() != null) {
+            // 创建用户配置文件
+            MonitorUserProfile profile = new MonitorUserProfile();
+            profile.setUserId(monitorUser.getUserId());
+            profile.setNickname(monitorUser.getUsername()); // 使用用户名作为默认昵称
+            profile.setCreatedAt(now);
+            profile.setUpdatedAt(now);
+            profile.setCreatedBy(monitorUser.getUserId());
+            profile.setUpdatedBy(monitorUser.getUserId());
+
+            // 保存用户配置文件
+            monitorUserProfileService.save(profile);
+        }
+
+        return saveSuccess;
+    }
+
+    /**
+     * 更新监考员信息
+     *
+     * @param monitorUser 监考员信息
+     * @return 更新结果
+     */
+    @PutMapping("updateMonitorUser")
+    public boolean updateMonitorUser(@RequestBody MonitorUser monitorUser) {
+        monitorUser.setUpdatedAt(LocalDateTime.now());
+        return monitorUserService.updateById(monitorUser);
+    }
+
+    /**
+     * 删除监考员信息
+     *
+     * @param userId 监考员ID
+     * @return 删除结果
+     */
+    @DeleteMapping("removeMonitorUser/{userId}")
+    public R<Boolean> removeMonitorUser(@PathVariable Integer userId) {
+        LoggedInUserInfo info = UserInfoContext.get();
+        if (eq(info.getUserId(), userId)) {
+            return R.failed("不能删除自己");
+        }
+        return R.ok(monitorUserService.removeById(userId));
+    }
 }

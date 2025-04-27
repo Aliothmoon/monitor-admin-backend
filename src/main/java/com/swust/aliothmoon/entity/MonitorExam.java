@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 @Table("monitor_exam")
 public class MonitorExam {
 
+
     @Id
     @Column("id")
     private Integer id;

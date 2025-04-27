@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
 import com.alibaba.fastjson2.JSON;
 import com.swust.aliothmoon.constant.ErrorCode;
+import com.swust.aliothmoon.context.TokenHeaderContext;
 import com.swust.aliothmoon.context.UserInfoContext;
 import com.swust.aliothmoon.interceptor.define.MatchedHandlerInterceptor;
 import com.swust.aliothmoon.model.user.LoggedInUserInfo;
@@ -21,6 +22,10 @@ import static com.swust.aliothmoon.constant.Keys.TOKEN;
 @Slf4j
 @Component
 public class AuthorizedInterceptor implements MatchedHandlerInterceptor {
+    @Override
+    public int order() {
+        return 0;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -28,9 +33,10 @@ public class AuthorizedInterceptor implements MatchedHandlerInterceptor {
         String val = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (val != null) {
             var key = StrUtil.removePrefix(val, "Bearer ");
-            LoggedInUserInfo info = RedisUtils.getVal(TOKEN.invoke(key), LoggedInUserInfo.class);
+            LoggedInUserInfo info = RedisUtils.getVal(TOKEN.apply(key), LoggedInUserInfo.class);
             if (info != null) {
                 UserInfoContext.set(info);
+                TokenHeaderContext.set(key);
                 return true;
             }
         }
@@ -45,6 +51,7 @@ public class AuthorizedInterceptor implements MatchedHandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         UserInfoContext.remove();
+        TokenHeaderContext.remove();
     }
 
     @Override
