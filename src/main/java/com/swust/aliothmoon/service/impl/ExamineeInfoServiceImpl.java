@@ -35,19 +35,19 @@ public class ExamineeInfoServiceImpl extends ServiceImpl<ExamineeInfoMapper, Exa
         
         // 添加查询条件
         if (StringUtils.hasText(name)) {
-            queryChain.where(examineeInfo.NAME.like("%" + name + "%"));
+            queryChain.where(examineeInfo.NAME.like( name));
         }
         
         if (StringUtils.hasText(studentId)) {
-            queryChain.where(examineeInfo.STUDENT_ID.like("%" + studentId + "%"));
+            queryChain.where(examineeInfo.STUDENT_ID.like( studentId));
         }
         
         if (StringUtils.hasText(college)) {
-            queryChain.where(examineeInfo.COLLEGE.like("%" + college + "%"));
+            queryChain.where(examineeInfo.COLLEGE.like( college));
         }
         
         if (StringUtils.hasText(className)) {
-            queryChain.where(examineeInfo.CLASS_NAME.like("%" + className + "%"));
+            queryChain.where(examineeInfo.CLASS_NAME.like( className));
         }
         
         // 按创建时间排序

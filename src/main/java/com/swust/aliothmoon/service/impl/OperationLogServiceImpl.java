@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * 操作日志服务实现类
  *
- * @author 
+ * @author
  *
  */
 @Service
@@ -38,29 +38,29 @@ public class OperationLogServiceImpl extends ServiceImpl<OperationLogMapper, Ope
     @Override
     public TableDataInfo<OperationLog> getPageData(int pageNum, int pageSize, String username, String operation, String path, String ip, String startTime, String endTime) {
         OperationLogTableDef operationLog = OperationLogTableDef.OPERATION_LOG;
-        
+
         QueryChain<OperationLog> queryChain = QueryChain.of(OperationLog.class);
-        
+
         // 添加查询条件
         if (StringUtils.hasText(username)) {
-            queryChain.where(operationLog.USERNAME.like("%" + username + "%"));
+            queryChain.where(operationLog.USERNAME.like(username));
         }
-        
+
         if (StringUtils.hasText(operation)) {
-            queryChain.where(operationLog.OPERATION.like("%" + operation + "%"));
+            queryChain.where(operationLog.OPERATION.like(operation));
         }
-        
+
         if (StringUtils.hasText(path)) {
-            queryChain.where(operationLog.PATH.like("%" + path + "%"));
+            queryChain.where(operationLog.PATH.like(path));
         }
-        
+
         if (StringUtils.hasText(ip)) {
-            queryChain.where(operationLog.IP.like("%" + ip + "%"));
+            queryChain.where(operationLog.IP.like(ip));
         }
-        
+
         // 处理时间范围
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        
+
         if (StringUtils.hasText(startTime)) {
             try {
                 LocalDateTime startDateTime = LocalDateTime.parse(startTime, formatter);
@@ -69,7 +69,7 @@ public class OperationLogServiceImpl extends ServiceImpl<OperationLogMapper, Ope
                 // 时间格式错误，忽略该条件
             }
         }
-        
+
         if (StringUtils.hasText(endTime)) {
             try {
                 LocalDateTime endDateTime = LocalDateTime.parse(endTime, formatter);
@@ -78,14 +78,14 @@ public class OperationLogServiceImpl extends ServiceImpl<OperationLogMapper, Ope
                 // 时间格式错误，忽略该条件
             }
         }
-        
+
         // 按操作时间降序排序
         queryChain.orderBy(operationLog.OPERATION_TIME.desc());
-        
+
         // 执行分页查询
         Page<OperationLog> page = new Page<>(pageNum, pageSize);
         Page<OperationLog> result = page(page, queryChain);
-        
+
         return TableDataInfo.of(result);
     }
 
@@ -100,12 +100,12 @@ public class OperationLogServiceImpl extends ServiceImpl<OperationLogMapper, Ope
     @Override
     public boolean cleanLogBeforeDays(int days) {
         OperationLogTableDef operationLog = OperationLogTableDef.OPERATION_LOG;
-        
+
         LocalDateTime beforeTime = LocalDateTime.now().minusDays(days);
-        
+
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .where(operationLog.OPERATION_TIME.lt(beforeTime));
-        
+
         return operationLogMapper.deleteByQuery(queryWrapper) > 0;
     }
 } 

@@ -5,9 +5,14 @@ import com.swust.aliothmoon.context.UserInfoContext;
 import com.swust.aliothmoon.define.R;
 import com.swust.aliothmoon.define.TableDataInfo;
 import com.swust.aliothmoon.entity.ExamineeAccount;
+import com.swust.aliothmoon.entity.ExamineeInfo;
+import com.swust.aliothmoon.model.dto.ExamineeLoginDTO;
 import com.swust.aliothmoon.model.dto.PageInfo;
 import com.swust.aliothmoon.model.vo.ExamineeAccountWithInfoVO;
+import com.swust.aliothmoon.model.vo.ExamineeInfoVO;
+import com.swust.aliothmoon.model.vo.ExamineeLoginVO;
 import com.swust.aliothmoon.service.ExamineeAccountService;
+import com.swust.aliothmoon.service.ExamineeInfoService;
 import com.swust.aliothmoon.utils.CryptoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +33,53 @@ import java.util.List;
 public class ExamineeAccountController {
 
     private final ExamineeAccountService examineeAccountService;
+    private final ExamineeInfoService examineeInfoService;
+
+    /**
+     * 考生专用登录接口
+     *
+     * @param loginDTO 登录数据
+     * @return 登录结果
+     */
+    @PostMapping("/login")
+    public R<ExamineeLoginVO> login(@RequestBody ExamineeLoginDTO loginDTO) {
+        // 参数校验
+        String account = loginDTO.getAccount();
+        String password = loginDTO.getPassword();
+        if (account == null || account.isEmpty() || password == null || password.isEmpty()) {
+            return R.failed("账号或密码不能为空");
+        }
+        
+        // 调用服务处理登录逻辑
+        ExamineeLoginVO loginVO = examineeAccountService.login(loginDTO);
+        if (loginVO == null) {
+            return R.failed("账号或密码错误，或账号已被禁用");
+        }
+        
+        return R.ok(loginVO);
+    }
+    
+    /**
+     * 获取考生信息
+     *
+     * @return 考生信息
+     */
+    @GetMapping("/info")
+    public R<ExamineeInfoVO> getExamineeInfo() {
+        // 从上下文中获取考生账号ID
+        Integer accountId = UserInfoContext.get().getUserId();
+        if (accountId == null) {
+            return R.failed("未登录");
+        }
+        
+        // 调用服务获取考生信息
+        ExamineeInfoVO infoVO = examineeAccountService.getExamineeInfo(accountId);
+        if (infoVO == null) {
+            return R.failed("账号不存在");
+        }
+        
+        return R.ok(infoVO);
+    }
 
     /**
      * 分页查询
@@ -80,22 +132,11 @@ public class ExamineeAccountController {
     @PostMapping("/saveExamineeAccount")
     @Transactional
     public R<Boolean> saveExamineeAccount(@RequestBody ExamineeAccount examineeAccount) {
-        // 设置创建和更新时间
-        LocalDateTime now = LocalDateTime.now();
-        examineeAccount.setCreatedAt(now);
-        examineeAccount.setUpdatedAt(now);
-        // 设置创建者和更新者
+        // 获取操作者ID
         Integer userId = UserInfoContext.get().getUserId();
-        examineeAccount.setCreatedBy(userId);
-        examineeAccount.setUpdatedBy(userId);
-        // 设置默认状态为启用
-        if (examineeAccount.getStatus() == null) {
-            examineeAccount.setStatus(1);
-        }
-        // 加密密码
-        examineeAccount.setPassword(CryptoUtils.hashPassword(examineeAccount.getPassword()));
         
-        boolean success = examineeAccountService.save(examineeAccount);
+        // 调用服务创建考生账号
+        boolean success = examineeAccountService.createExamineeAccount(examineeAccount, userId);
         return R.ok(success);
     }
 
@@ -107,19 +148,11 @@ public class ExamineeAccountController {
      */
     @PutMapping("/updateExamineeAccount")
     public R<Boolean> updateExamineeAccount(@RequestBody ExamineeAccount examineeAccount) {
-        // 设置更新时间和更新者
-        examineeAccount.setUpdatedAt(LocalDateTime.now());
-        examineeAccount.setUpdatedBy(UserInfoContext.get().getUserId());
+        // 获取操作者ID
+        Integer userId = UserInfoContext.get().getUserId();
         
-        // 如果密码不为空，则加密密码
-        if (examineeAccount.getPassword() != null && !examineeAccount.getPassword().isEmpty()) {
-            examineeAccount.setPassword(CryptoUtils.hashPassword(examineeAccount.getPassword()));
-        } else {
-            // 如果密码为空，不更新密码字段
-            examineeAccount.setPassword(null);
-        }
-        
-        boolean success = examineeAccountService.updateById(examineeAccount);
+        // 调用服务更新考生账号
+        boolean success = examineeAccountService.updateExamineeAccount(examineeAccount, userId);
         return R.ok(success);
     }
 

@@ -3,8 +3,11 @@ package com.swust.aliothmoon.service;
 import com.mybatisflex.core.service.IService;
 import com.swust.aliothmoon.define.TableDataInfo;
 import com.swust.aliothmoon.entity.ExamineeAccount;
+import com.swust.aliothmoon.model.dto.ExamineeLoginDTO;
 import com.swust.aliothmoon.model.dto.PageInfo;
 import com.swust.aliothmoon.model.vo.ExamineeAccountWithInfoVO;
+import com.swust.aliothmoon.model.vo.ExamineeInfoVO;
+import com.swust.aliothmoon.model.vo.ExamineeLoginVO;
 
 import java.util.List;
 
@@ -15,6 +18,57 @@ import java.util.List;
  *
  */
 public interface ExamineeAccountService extends IService<ExamineeAccount> {
+
+    /**
+     * 验证考生登录
+     *
+     * @param account 账号
+     * @param password 密码
+     * @return 考生账号，如果验证失败则返回null
+     */
+    ExamineeAccount validateLogin(String account, String password);
+
+    /**
+     * 生成考生专用token
+     *
+     * @param examineeAccount 考生账号
+     * @return token字符串
+     */
+    String generateExamineeToken(ExamineeAccount examineeAccount);
+    
+    /**
+     * 处理考生登录
+     *
+     * @param loginDTO 登录信息
+     * @return 登录结果
+     */
+    ExamineeLoginVO login(ExamineeLoginDTO loginDTO);
+    
+    /**
+     * 获取考生信息
+     *
+     * @param accountId 考生账号ID
+     * @return 考生信息
+     */
+    ExamineeInfoVO getExamineeInfo(Integer accountId);
+    
+    /**
+     * 创建考生账号
+     *
+     * @param examineeAccount 考生账号
+     * @param operatorId 操作者ID
+     * @return 是否成功
+     */
+    boolean createExamineeAccount(ExamineeAccount examineeAccount, Integer operatorId);
+    
+    /**
+     * 更新考生账号
+     *
+     * @param examineeAccount 考生账号
+     * @param operatorId 操作者ID
+     * @return 是否成功
+     */
+    boolean updateExamineeAccount(ExamineeAccount examineeAccount, Integer operatorId);
 
     /**
      * 获取分页数据
