@@ -4,6 +4,7 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.swust.aliothmoon.entity.MonitorUserRole;
 import com.swust.aliothmoon.mapper.MonitorUserRoleMapper;
 import com.swust.aliothmoon.service.MonitorUserRoleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
  * @since 2025-03-24
  */
 @Service
+@RequiredArgsConstructor
 public class MonitorUserRoleServiceImpl extends ServiceImpl<MonitorUserRoleMapper, MonitorUserRole>  implements MonitorUserRoleService{
 
 }

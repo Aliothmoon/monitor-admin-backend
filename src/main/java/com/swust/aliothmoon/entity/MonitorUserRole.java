@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
  *  实体类。
  *
  * @author Alioth
- * @since 2025-03-24
+ * @since 2025-03-30
  */
 @Data
 @Builder
@@ -25,8 +25,7 @@ import lombok.NoArgsConstructor;
 @Table("monitor_user_role")
 public class MonitorUserRole implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+
 
     @Id
     private Integer userId;

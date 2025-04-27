@@ -4,6 +4,7 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.swust.aliothmoon.entity.MonitorExamInfo;
 import com.swust.aliothmoon.mapper.MonitorExamInfoMapper;
 import com.swust.aliothmoon.service.MonitorExamInfoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
  * @since 2025-03-24
  */
 @Service
+@RequiredArgsConstructor
 public class MonitorExamInfoServiceImpl extends ServiceImpl<MonitorExamInfoMapper, MonitorExamInfo>  implements MonitorExamInfoService{
 
 }

@@ -1,0 +1,16 @@
+server:
+  port: 8777
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/monitor?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: admin
+  data:
+    redis:
+      database: 0
+#      username:
+#      password:
+
+mybatis-flex:
+  global-config:
+    print-banner: off

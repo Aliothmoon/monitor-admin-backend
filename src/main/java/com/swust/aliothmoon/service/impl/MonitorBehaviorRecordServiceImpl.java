@@ -4,6 +4,7 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.swust.aliothmoon.entity.MonitorBehaviorRecord;
 import com.swust.aliothmoon.mapper.MonitorBehaviorRecordMapper;
 import com.swust.aliothmoon.service.MonitorBehaviorRecordService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
  * @since 2025-03-24
  */
 @Service
+@RequiredArgsConstructor
 public class MonitorBehaviorRecordServiceImpl extends ServiceImpl<MonitorBehaviorRecordMapper, MonitorBehaviorRecord>  implements MonitorBehaviorRecordService{
 
 }

@@ -1,11 +1,12 @@
 package com.swust.aliothmoon.define;
 
 
-import com.github.pagehelper.IPage;
+import com.mybatisflex.core.paginate.Page;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,12 +29,14 @@ public class TableDataInfo<T> implements Serializable {
     /**
      * 列表数据
      */
-    private List<T> rows;
+    private List<T> rows = Collections.emptyList();
 
     /**
      * 页数
      */
     private int pages;
+
+    private int code;
 
     public TableDataInfo() {
     }
@@ -48,23 +51,14 @@ public class TableDataInfo<T> implements Serializable {
         this.rows = list;
         this.total = total;
     }
-//
-//    public static <T> TableDataInfo<T> build(IPage<T> page) {
-//        TableDataInfo<T> rspData = new TableDataInfo<>();
-//        rspData.setRows(page.getRecords());
-//        rspData.setTotal(page.getTotal());
-//        return rspData;
-//    }
-//
-//    public static <T, K> TableDataInfo<K> build(IPage<T> page, List<K> result) {
-//        TableDataInfo<K> rspData = new TableDataInfo<>();
-//        rspData.setRows(result);
-//        rspData.setTotal(page.getTotal());
-//        return rspData;
-//    }
-//
-//    public R<TableDataInfo<T>> ok() {
-//        return R.ok(this);
-//    }
+
+    @SuppressWarnings("unchecked")
+    public static <E> TableDataInfo<E> of(Page<E> t) {
+        return (TableDataInfo<E>) new TableDataInfo<>()
+                .setTotal(t.getTotalRow())
+                .setPages((int) t.getTotalPage())
+                .setRows((List<Object>) t.getRecords());
+
+    }
 
 }
