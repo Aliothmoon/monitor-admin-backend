@@ -9,11 +9,11 @@ import org.apache.ibatis.annotations.Param;
  * 用户个人信息 Mapper 接口
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @Mapper
 public interface MonitorUserProfileMapper extends BaseMapper<MonitorUserProfile> {
-    
+
     /**
      * 根据用户ID查询个人信息
      *

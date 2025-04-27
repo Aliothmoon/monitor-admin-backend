@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * 用户个人信息实体类
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @Data
 @Builder
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table("monitor_user_profile")
 public class MonitorUserProfile {
-    
+
     /**
      * 主键ID
      */

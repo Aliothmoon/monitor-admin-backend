@@ -20,7 +20,7 @@ public class ShaUtil {
     private static final String SHA_512 = "SHA-512";
 
     private static final char[] hexDigits =
-        {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     public static String getSHA1(String painText, boolean uppercase) {
         return getSha(painText, SHA_1, uppercase);
@@ -33,6 +33,7 @@ public class ShaUtil {
     public static String getSHA256(String painText, boolean uppercase) {
         return getSha(painText, SHA_256, uppercase);
     }
+
     public static String getSHA256(String painText) {
         return getSha(painText, SHA_256, true);
     }

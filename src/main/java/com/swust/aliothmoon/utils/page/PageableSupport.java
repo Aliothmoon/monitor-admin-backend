@@ -55,8 +55,8 @@ public class PageableSupport {
     public static PageMetadata getMetaData() {
         PageMetadata metadata = new PageMetadata();
         Optional<HttpServletRequest> req = Optional.ofNullable(RequestContextHolder.getRequestAttributes())
-                        .map(e -> (ServletRequestAttributes) e)
-                        .map(ServletRequestAttributes::getRequest);
+                .map(e -> (ServletRequestAttributes) e)
+                .map(ServletRequestAttributes::getRequest);
         if (req.isPresent()) {
             HttpServletRequest request = req.get();
             // 参数兼容性

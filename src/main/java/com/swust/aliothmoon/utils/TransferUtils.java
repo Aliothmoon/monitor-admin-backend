@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TransferUtils {
     private static final ConcurrentHashMap<Class<?>, ConstructorAccess<?>> CONSTRUCTOR_CACHE = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Pair<Class<?>, Class<?>>, BeanCopier> BEAN_COPIER_CACHE = new ConcurrentHashMap<>();
+    private static final ReflectConverter C = new ReflectConverter();
 
     @SuppressWarnings("unchecked")
     public static <T> T to(Object from, Class<?> to) {
@@ -30,39 +31,6 @@ public class TransferUtils {
         );
         copier.copy(from, target, C);
         return (T) target;
-    }
-
-    private static final ReflectConverter C = new ReflectConverter();
-
-    private static class ReflectConverter implements Converter {
-
-        @Override
-        public Object convert(Object value, Class clazz, Object context) {
-            try {
-                return Convert.convert(clazz, value);
-            } catch (ConvertException e) {
-                if (clazz.isPrimitive()) {
-                    if (clazz == int.class) {
-                        return 0;
-                    } else if (clazz == boolean.class) {
-                        return false;
-                    } else if (clazz == char.class) {
-                        return '\u0000';
-                    } else if (clazz == byte.class) {
-                        return (byte) 0;
-                    } else if (clazz == short.class) {
-                        return (short) 0;
-                    } else if (clazz == long.class) {
-                        return 0L;
-                    } else if (clazz == float.class) {
-                        return 0.0f;
-                    } else if (clazz == double.class) {
-                        return 0.0d;
-                    }
-                }
-                return ThrowsUtils.doThrow(e);
-            }
-        }
     }
 
     /**
@@ -100,5 +68,36 @@ public class TransferUtils {
         Pair<Class<?>, Class<?>> key = Pair.of(from.getClass(), to.getClass());
         BeanCopier copier = BEAN_COPIER_CACHE.computeIfAbsent(key, p -> BeanCopier.create(p.getFirst(), p.getSecond(), false));
         copier.copy(from, to, null);
+    }
+
+    private static class ReflectConverter implements Converter {
+
+        @Override
+        public Object convert(Object value, Class clazz, Object context) {
+            try {
+                return Convert.convert(clazz, value);
+            } catch (ConvertException e) {
+                if (clazz.isPrimitive()) {
+                    if (clazz == int.class) {
+                        return 0;
+                    } else if (clazz == boolean.class) {
+                        return false;
+                    } else if (clazz == char.class) {
+                        return '\u0000';
+                    } else if (clazz == byte.class) {
+                        return (byte) 0;
+                    } else if (clazz == short.class) {
+                        return (short) 0;
+                    } else if (clazz == long.class) {
+                        return 0L;
+                    } else if (clazz == float.class) {
+                        return 0.0f;
+                    } else if (clazz == double.class) {
+                        return 0.0d;
+                    }
+                }
+                return ThrowsUtils.doThrow(e);
+            }
+        }
     }
 }

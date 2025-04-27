@@ -53,7 +53,7 @@ public class DurationUtils {
         Instant pauseEndInstant = pauseEnd.atZone(SHANGHAI_ZONE).toInstant();
 
         Duration duration = Duration.between(pauseStartInstant, pauseEndInstant);
-        return (int)duration.toMinutes();
+        return (int) duration.toMinutes();
     }
 }
 

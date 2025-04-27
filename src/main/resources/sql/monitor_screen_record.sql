@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS `monitor_screen_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `exam_id` int(11) NOT NULL COMMENT '考试ID',
+  `exam_name` varchar(255) NOT NULL COMMENT '考试名称',
+  `student_id` int(11) NOT NULL COMMENT '学生ID',
+  `student_name` varchar(100) NOT NULL COMMENT '学生姓名',
+  `start_time` datetime NOT NULL COMMENT '开始时间',
+  `end_time` datetime NOT NULL COMMENT '结束时间',
+  `duration` int(11) NOT NULL COMMENT '时长(秒)',
+  `video_url` varchar(500) NOT NULL COMMENT '视频URL',
+  `file_size` int(11) DEFAULT NULL COMMENT '文件大小(KB)',
+  `risk_level` int(11) NOT NULL DEFAULT '0' COMMENT '风险等级 0-低风险 1-中风险 2-高风险',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
+  `created_by` int(11) DEFAULT NULL COMMENT '创建者ID',
+  `updated_by` int(11) DEFAULT NULL COMMENT '更新者ID',
+  PRIMARY KEY (`id`),
+  KEY `idx_exam_id` (`exam_id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_start_time` (`start_time`),
+  KEY `idx_risk_level` (`risk_level`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='录屏管理表'; 

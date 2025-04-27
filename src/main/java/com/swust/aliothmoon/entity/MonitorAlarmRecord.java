@@ -3,20 +3,18 @@ package com.swust.aliothmoon.entity;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
-import java.time.LocalDateTime;
-
-import java.io.Serial;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  *  实体类。
  *
  * @author Alioth
- * @since 2025-04-27
+ *
  */
 @Data
 @Builder
@@ -24,7 +22,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table("monitor_alarm_record")
 public class MonitorAlarmRecord {
-
 
 
     @Id

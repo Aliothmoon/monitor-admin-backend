@@ -3,20 +3,18 @@ package com.swust.aliothmoon.entity;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
-import java.time.LocalDateTime;
-
-import java.io.Serial;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
- *  实体类。
+ * 考试管理实体类。
  *
  * @author Alioth
- * @since 2025-04-27
+ *
  */
 @Data
 @Builder
@@ -25,11 +23,15 @@ import lombok.NoArgsConstructor;
 @Table("monitor_exam")
 public class MonitorExam {
 
-
-
     @Id
-    @Column("exam_id")
-    private Integer examId;
+    @Column("id")
+    private Integer id;
+
+    @Column("name")
+    private String name;
+
+    @Column("description")
+    private String description;
 
     @Column("start_time")
     private LocalDateTime startTime;
@@ -37,8 +39,11 @@ public class MonitorExam {
     @Column("end_time")
     private LocalDateTime endTime;
 
-    @Column("remark")
-    private String remark;
+    @Column("duration")
+    private Integer duration;
+
+    @Column("status")
+    private Integer status;
 
     @Column("created_at")
     private LocalDateTime createdAt;
@@ -51,5 +56,4 @@ public class MonitorExam {
 
     @Column("updated_by")
     private Integer updatedBy;
-
 }

@@ -9,10 +9,10 @@ import java.util.List;
  * 可疑进程名单服务接口。
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 public interface MonitorSuspiciousProcessService extends IService<MonitorSuspiciousProcess> {
-    
+
     /**
      * 根据风险等级查询可疑进程名单
      *
@@ -20,7 +20,7 @@ public interface MonitorSuspiciousProcessService extends IService<MonitorSuspici
      * @return 进程列表
      */
     List<MonitorSuspiciousProcess> listByRiskLevel(Integer riskLevel);
-    
+
     /**
      * 检查进程名是否已存在
      *

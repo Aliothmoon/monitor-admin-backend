@@ -23,7 +23,7 @@ import static com.swust.aliothmoon.entity.table.MonitorDomainBlacklistTableDef.M
  * 域名黑名单控制器
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @RestController
 @RequestMapping("/exam/domain-blacklist")
@@ -41,35 +41,35 @@ public class DomainBlacklistController {
     @PostMapping("/page")
     public R<Page<DomainBlacklistVO>> page(@RequestBody DomainBlacklistQueryDTO queryDTO) {
         QueryWrapper queryWrapper = QueryWrapper.create();
-        
+
         // 添加查询条件
         if (queryDTO.getDomain() != null && !queryDTO.getDomain().isEmpty()) {
-            queryWrapper.and(MONITOR_DOMAIN_BLACKLIST.DOMAIN.like("%" + queryDTO.getDomain() + "%"));
+            queryWrapper.and(MONITOR_DOMAIN_BLACKLIST.DOMAIN.like(queryDTO.getDomain()));
         }
-        
+
         if (queryDTO.getCategory() != null && !queryDTO.getCategory().isEmpty()) {
             queryWrapper.and(MONITOR_DOMAIN_BLACKLIST.CATEGORY.eq(queryDTO.getCategory()));
         }
-        
+
         // 按创建时间降序排序
         queryWrapper.orderBy(MONITOR_DOMAIN_BLACKLIST.CREATED_AT.desc());
-        
+
         // 分页查询
         Page<MonitorDomainBlacklist> page = domainBlacklistService.page(
                 new Page<>(queryDTO.getPageNum(), queryDTO.getPageSize()),
                 queryWrapper
         );
-        
+
         // 转换为VO
         Page<DomainBlacklistVO> result = new Page<>();
         result.setPageNumber(page.getPageNumber());
         result.setPageSize(page.getPageSize());
         result.setTotalRow(page.getTotalRow());
         result.setTotalPage(page.getTotalPage());
-        
+
         List<DomainBlacklistVO> records = TransferUtils.toList(page.getRecords(), DomainBlacklistVO.class);
         result.setRecords(records);
-        
+
         return R.ok(result);
     }
 
@@ -88,7 +88,7 @@ public class DomainBlacklistController {
         DomainBlacklistVO vo = TransferUtils.to(domain, DomainBlacklistVO.class);
         return R.ok(vo);
     }
-    
+
     /**
      * 根据分类查询域名黑名单列表
      *
@@ -114,16 +114,16 @@ public class DomainBlacklistController {
         if (domainBlacklistService.checkDomainExists(addDTO.getDomain(), null)) {
             return R.failed("域名已存在");
         }
-        
+
         MonitorDomainBlacklist domain = TransferUtils.to(addDTO, MonitorDomainBlacklist.class);
-        
+
         // 设置创建者和创建时间
         LocalDateTime now = LocalDateTime.now();
         domain.setCreatedAt(now);
         domain.setUpdatedAt(now);
         domain.setCreatedBy(UserInfoContext.get().getUserId());
         domain.setUpdatedBy(UserInfoContext.get().getUserId());
-        
+
         boolean success = domainBlacklistService.save(domain);
         return success ? R.ok(true) : R.failed("添加失败");
     }
@@ -140,18 +140,18 @@ public class DomainBlacklistController {
         if (domain == null) {
             return R.failed("域名不存在");
         }
-        
+
         // 检查域名是否已存在
         if (domainBlacklistService.checkDomainExists(updateDTO.getDomain(), updateDTO.getId())) {
             return R.failed("域名已存在");
         }
-        
+
         TransferUtils.copyProperties(updateDTO, domain);
-        
+
         // 设置更新者和更新时间
         domain.setUpdatedAt(LocalDateTime.now());
         domain.setUpdatedBy(UserInfoContext.get().getUserId());
-        
+
         boolean success = domainBlacklistService.updateById(domain);
         return success ? R.ok(true) : R.failed("更新失败");
     }

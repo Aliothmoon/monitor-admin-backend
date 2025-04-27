@@ -5,7 +5,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import lombok.experimental.UtilityClass;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
@@ -278,8 +277,6 @@ public class StreamUtils {
         }
         return list;
     }
-
-
 
 
     /**

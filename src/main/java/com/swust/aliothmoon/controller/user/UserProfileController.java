@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * 用户个人信息控制器
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @RestController
 @RequestMapping("/user/profile")

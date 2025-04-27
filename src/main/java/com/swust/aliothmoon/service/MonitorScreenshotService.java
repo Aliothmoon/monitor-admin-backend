@@ -10,10 +10,10 @@ import java.util.List;
  * 截图管理服务接口。
  *
  * @author Alioth
- * @since 2025-04-28
+ *
  */
 public interface MonitorScreenshotService extends IService<MonitorScreenshot> {
-    
+
     /**
      * 根据风险等级查询截图列表
      *
@@ -21,7 +21,7 @@ public interface MonitorScreenshotService extends IService<MonitorScreenshot> {
      * @return 截图列表
      */
     List<MonitorScreenshot> listByRiskLevel(Integer riskLevel);
-    
+
     /**
      * 根据时间范围查询截图列表
      *
@@ -30,7 +30,7 @@ public interface MonitorScreenshotService extends IService<MonitorScreenshot> {
      * @return 截图列表
      */
     List<MonitorScreenshot> listByTimeRange(LocalDateTime startTime, LocalDateTime endTime);
-    
+
     /**
      * 根据考试ID查询截图列表
      *
@@ -38,7 +38,7 @@ public interface MonitorScreenshotService extends IService<MonitorScreenshot> {
      * @return 截图列表
      */
     List<MonitorScreenshot> listByExamId(Integer examId);
-    
+
     /**
      * 根据学生ID查询截图列表
      *

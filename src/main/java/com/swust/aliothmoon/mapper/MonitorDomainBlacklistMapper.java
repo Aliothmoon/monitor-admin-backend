@@ -11,11 +11,11 @@ import java.util.List;
  * 域名黑名单 Mapper 接口。
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @Mapper
 public interface MonitorDomainBlacklistMapper extends BaseMapper<MonitorDomainBlacklist> {
-    
+
     /**
      * 根据分类查询域名黑名单
      *
@@ -23,7 +23,7 @@ public interface MonitorDomainBlacklistMapper extends BaseMapper<MonitorDomainBl
      * @return 域名列表
      */
     List<MonitorDomainBlacklist> listByCategory(@Param("category") String category);
-    
+
     /**
      * 检查域名是否已存在
      *

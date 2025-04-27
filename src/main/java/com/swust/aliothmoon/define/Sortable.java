@@ -5,7 +5,7 @@ package com.swust.aliothmoon.define;
  * 可排序
  *
  * @author Aliothmoon
- * @since 2024/07/11
+ *
  */
 public interface Sortable {
     /**

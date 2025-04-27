@@ -1,24 +1,18 @@
 package com.swust.aliothmoon.controller.exam;
 
 import com.mybatisflex.core.paginate.Page;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.swust.aliothmoon.entity.MonitorAlarmRecord;
 import com.swust.aliothmoon.service.MonitorAlarmRecordService;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
  *  MonitorAlarmRecordController。
  *
  * @author Alioth
- * @since 2025-03-24
+ *
  */
 @RestController
 @RequestMapping("/monitorAlarmRecord")
@@ -30,7 +24,7 @@ public class MonitorAlarmRecordController {
     /**
      * 添加。
      *
-     * @param monitorAlarmRecord 
+     * @param monitorAlarmRecord
      * @return {@code true} 添加成功，{@code false} 添加失败
      */
     @PostMapping("save")
@@ -52,7 +46,7 @@ public class MonitorAlarmRecordController {
     /**
      * 根据主键更新。
      *
-     * @param monitorAlarmRecord 
+     * @param monitorAlarmRecord
      * @return {@code true} 更新成功，{@code false} 更新失败
      */
     @PutMapping("update")

@@ -33,11 +33,11 @@ public class SpringUtils extends SpringUtil {
     @SuppressWarnings("unchecked")
     public static <T> T getAopProxy(T invoker) {
         try {
-            return (T)AopContext.currentProxy();
+            return (T) AopContext.currentProxy();
         } catch (IllegalStateException e) {
             log.warn("fallback aop proxy", e.getCause());
             ThrowsUtils.throwIfNull(invoker, () -> new IllegalArgumentException("invoker is null"));
-            return context().getBean((Class<T>)invoker.getClass());
+            return context().getBean((Class<T>) invoker.getClass());
         }
     }
 

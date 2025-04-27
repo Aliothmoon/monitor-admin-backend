@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class BeanUtil {
 
-    private static final ConcurrentHashMap<Class<?>, MethodAccess> cache = new ConcurrentHashMap<>();
     public static final String SERIALIZABLE_LAMBDA_IMPL_METHOD = "writeReplace";
+    private static final ConcurrentHashMap<Class<?>, MethodAccess> cache = new ConcurrentHashMap<>();
 
     public static MethodAccess getMethodAccess(Object o) {
         Class<?> clz = o.getClass();
@@ -29,7 +29,7 @@ public class BeanUtil {
     public String getLambdaImplMethodFullName(Serializable serializable) {
         Method method = serializable.getClass().getDeclaredMethod(SERIALIZABLE_LAMBDA_IMPL_METHOD);
         method.setAccessible(true);
-        SerializedLambda lambda = (SerializedLambda)method.invoke(serializable);
+        SerializedLambda lambda = (SerializedLambda) method.invoke(serializable);
         return (lambda.getImplClass() + "." + lambda.getImplMethodName()).replace('/', '.');
     }
 }

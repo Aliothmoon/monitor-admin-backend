@@ -3,19 +3,18 @@ package com.swust.aliothmoon.entity;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
-import java.time.LocalDateTime;
-import java.io.Serial;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * 可疑进程名单实体类。
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @Data
 @Builder
@@ -36,19 +35,19 @@ public class MonitorSuspiciousProcess {
      */
     @Column("process_name")
     private String processName;
-    
+
     /**
      * 进程描述
      */
     @Column("description")
     private String description;
-    
+
     /**
      * 风险等级 1-低 2-中 3-高
      */
     @Column("risk_level")
     private Integer riskLevel;
-    
+
     /**
      * 创建时间
      */

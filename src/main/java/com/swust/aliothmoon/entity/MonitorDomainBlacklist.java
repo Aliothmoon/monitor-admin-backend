@@ -3,19 +3,18 @@ package com.swust.aliothmoon.entity;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
-import java.time.LocalDateTime;
-import java.io.Serial;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * 域名黑名单实体类。
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @Data
 @Builder
@@ -36,19 +35,19 @@ public class MonitorDomainBlacklist {
      */
     @Column("domain")
     private String domain;
-    
+
     /**
      * 描述
      */
     @Column("description")
     private String description;
-    
+
     /**
      * 分类
      */
     @Column("category")
     private String category;
-    
+
     /**
      * 创建时间
      */

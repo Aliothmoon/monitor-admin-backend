@@ -7,7 +7,7 @@ public class LoggedInUserInfo {
     private Integer userId;
     private String username;
     private Integer roleId;
-    
+
     // 扩展个人信息字段
     private String email;
     private String phone;

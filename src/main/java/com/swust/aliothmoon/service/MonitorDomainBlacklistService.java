@@ -9,10 +9,10 @@ import java.util.List;
  * 域名黑名单服务接口。
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 public interface MonitorDomainBlacklistService extends IService<MonitorDomainBlacklist> {
-    
+
     /**
      * 根据分类查询域名黑名单
      *
@@ -20,7 +20,7 @@ public interface MonitorDomainBlacklistService extends IService<MonitorDomainBla
      * @return 域名列表
      */
     List<MonitorDomainBlacklist> listByCategory(String category);
-    
+
     /**
      * 检查域名是否已存在
      *

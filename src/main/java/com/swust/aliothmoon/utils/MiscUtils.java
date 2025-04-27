@@ -34,7 +34,7 @@ public class MiscUtils {
     }
 
     @SafeVarargs
-    public static <T> boolean notIn(final T key, final T... values){
+    public static <T> boolean notIn(final T key, final T... values) {
         return !in(key, values);
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
  * 风险图片模板服务实现类。
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class MonitorRiskImageTemplateServiceImpl extends ServiceImpl<MonitorRisk
     public List<MonitorRiskImageTemplate> listByCategory(String category) {
         return riskImageTemplateMapper.listByCategory(category);
     }
-    
+
     @Override
     public List<MonitorRiskImageTemplate> listByKeyword(String keyword) {
         return riskImageTemplateMapper.listByKeyword(keyword);

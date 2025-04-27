@@ -11,11 +11,11 @@ import java.util.List;
  * 可疑进程名单 Mapper 接口。
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @Mapper
 public interface MonitorSuspiciousProcessMapper extends BaseMapper<MonitorSuspiciousProcess> {
-    
+
     /**
      * 根据风险等级查询可疑进程名单
      *
@@ -23,7 +23,7 @@ public interface MonitorSuspiciousProcessMapper extends BaseMapper<MonitorSuspic
      * @return 进程列表
      */
     List<MonitorSuspiciousProcess> listByRiskLevel(@Param("riskLevel") Integer riskLevel);
-    
+
     /**
      * 检查进程名是否已存在
      *

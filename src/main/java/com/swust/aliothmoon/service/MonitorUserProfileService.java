@@ -9,10 +9,10 @@ import com.swust.aliothmoon.model.profile.UserProfileVO;
  * 用户个人信息服务接口
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 public interface MonitorUserProfileService extends IService<MonitorUserProfile> {
-    
+
     /**
      * 根据用户ID获取个人信息
      *
@@ -20,7 +20,7 @@ public interface MonitorUserProfileService extends IService<MonitorUserProfile> 
      * @return 个人信息VO
      */
     UserProfileVO getByUserId(Integer userId);
-    
+
     /**
      * 更新用户个人信息
      *

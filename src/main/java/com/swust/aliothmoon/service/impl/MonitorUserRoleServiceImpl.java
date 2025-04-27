@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
  *  服务层实现。
  *
  * @author Alioth
- * @since 2025-03-24
+ *
  */
 @Service
 @RequiredArgsConstructor
-public class MonitorUserRoleServiceImpl extends ServiceImpl<MonitorUserRoleMapper, MonitorUserRole>  implements MonitorUserRoleService{
+public class MonitorUserRoleServiceImpl extends ServiceImpl<MonitorUserRoleMapper, MonitorUserRole> implements MonitorUserRoleService {
 
 }

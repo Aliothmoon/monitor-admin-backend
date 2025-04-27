@@ -2,21 +2,19 @@ package com.swust.aliothmoon.entity;
 
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
-import java.io.Serial;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 /**
  *  实体类。
  *
  * @author Alioth
- * @since 2025-03-30
+ *
  */
 @Data
 @Builder
@@ -24,7 +22,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table("monitor_role")
 public class MonitorRole implements Serializable {
-
 
 
     @Id

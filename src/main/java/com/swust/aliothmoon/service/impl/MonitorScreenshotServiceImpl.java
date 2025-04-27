@@ -14,7 +14,7 @@ import java.util.List;
  * 截图管理服务实现类。
  *
  * @author Alioth
- * @since 2025-04-28
+ *
  */
 @Service
 @RequiredArgsConstructor

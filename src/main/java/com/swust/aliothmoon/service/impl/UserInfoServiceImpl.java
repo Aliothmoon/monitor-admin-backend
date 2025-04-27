@@ -33,7 +33,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public R<LoggedInUserInfo> self() {
         LoggedInUserInfo userInfo = UserInfoContext.get();
-        
+
         // 加载用户个人信息
         MonitorUserProfile profile = userProfileMapper.getByUserId(userInfo.getUserId());
         if (profile != null) {
@@ -46,7 +46,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             userInfo.setEmployeeId(profile.getEmployeeId());
             userInfo.setProfile(profile.getProfile());
         }
-        
+
         return R.ok(userInfo);
     }
 

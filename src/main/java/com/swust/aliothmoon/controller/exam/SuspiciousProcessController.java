@@ -23,7 +23,7 @@ import static com.swust.aliothmoon.entity.table.MonitorSuspiciousProcessTableDef
  * 可疑进程名单控制器
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @RestController
 @RequestMapping("/exam/suspicious-process")
@@ -41,35 +41,35 @@ public class SuspiciousProcessController {
     @PostMapping("/page")
     public R<Page<SuspiciousProcessVO>> page(@RequestBody SuspiciousProcessQueryDTO queryDTO) {
         QueryWrapper queryWrapper = QueryWrapper.create();
-        
+
         // 添加查询条件
         if (queryDTO.getProcessName() != null && !queryDTO.getProcessName().isEmpty()) {
-            queryWrapper.and(MONITOR_SUSPICIOUS_PROCESS.PROCESS_NAME.like("%" + queryDTO.getProcessName() + "%"));
+            queryWrapper.and(MONITOR_SUSPICIOUS_PROCESS.PROCESS_NAME.like(queryDTO.getProcessName()));
         }
-        
+
         if (queryDTO.getRiskLevel() != null) {
             queryWrapper.and(MONITOR_SUSPICIOUS_PROCESS.RISK_LEVEL.eq(queryDTO.getRiskLevel()));
         }
-        
+
         // 按创建时间降序排序
         queryWrapper.orderBy(MONITOR_SUSPICIOUS_PROCESS.CREATED_AT.desc());
-        
+
         // 分页查询
         Page<MonitorSuspiciousProcess> page = suspiciousProcessService.page(
                 new Page<>(queryDTO.getPageNum(), queryDTO.getPageSize()),
                 queryWrapper
         );
-        
+
         // 转换为VO
         Page<SuspiciousProcessVO> result = new Page<>();
         result.setPageNumber(page.getPageNumber());
         result.setPageSize(page.getPageSize());
         result.setTotalRow(page.getTotalRow());
         result.setTotalPage(page.getTotalPage());
-        
+
         List<SuspiciousProcessVO> records = TransferUtils.toList(page.getRecords(), SuspiciousProcessVO.class);
         result.setRecords(records);
-        
+
         return R.ok(result);
     }
 
@@ -98,14 +98,14 @@ public class SuspiciousProcessController {
     @PostMapping
     public R<Boolean> add(@RequestBody SuspiciousProcessAddDTO addDTO) {
         MonitorSuspiciousProcess process = TransferUtils.to(addDTO, MonitorSuspiciousProcess.class);
-        
+
         // 设置创建者和创建时间
         LocalDateTime now = LocalDateTime.now();
         process.setCreatedAt(now);
         process.setUpdatedAt(now);
         process.setCreatedBy(UserInfoContext.get().getUserId());
         process.setUpdatedBy(UserInfoContext.get().getUserId());
-        
+
         boolean success = suspiciousProcessService.save(process);
         return success ? R.ok(true) : R.failed("添加失败");
     }
@@ -122,13 +122,13 @@ public class SuspiciousProcessController {
         if (process == null) {
             return R.failed("进程不存在");
         }
-        
+
         TransferUtils.copyProperties(updateDTO, process);
-        
+
         // 设置更新者和更新时间
         process.setUpdatedAt(LocalDateTime.now());
         process.setUpdatedBy(UserInfoContext.get().getUserId());
-        
+
         boolean success = suspiciousProcessService.updateById(process);
         return success ? R.ok(true) : R.failed("更新失败");
     }

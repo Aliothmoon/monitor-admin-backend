@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * 用户个人信息服务实现类
  *
  * @author Alioth
- * @since 2023-06-11
+ *
  */
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class MonitorUserProfileServiceImpl extends ServiceImpl<MonitorUserProfil
     public boolean updateUserProfile(Integer userId, UserProfileUpdateDTO dto) {
         MonitorUserProfile profile = userProfileMapper.getByUserId(userId);
         LocalDateTime now = LocalDateTime.now();
-        
+
         if (profile == null) {
             // 创建新的个人信息记录
             profile = new MonitorUserProfile();
@@ -54,7 +54,7 @@ public class MonitorUserProfileServiceImpl extends ServiceImpl<MonitorUserProfil
             profile.setUpdatedAt(now);
             profile.setCreatedBy(userId);
             profile.setUpdatedBy(userId);
-            
+
             return save(profile);
         } else {
             // 更新现有个人信息
@@ -68,7 +68,7 @@ public class MonitorUserProfileServiceImpl extends ServiceImpl<MonitorUserProfil
             profile.setProfile(dto.getProfile());
             profile.setUpdatedAt(now);
             profile.setUpdatedBy(userId);
-            
+
             return updateById(profile);
         }
     }
