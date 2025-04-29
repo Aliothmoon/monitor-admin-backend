@@ -8,6 +8,9 @@ public class LoggedInUserInfo {
     private String username;
     private Integer roleId;
 
+
+    private String fileUrlPrefix;
+
     // 扩展个人信息字段
     private String email;
     private String phone;

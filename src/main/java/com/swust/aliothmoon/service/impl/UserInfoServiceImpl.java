@@ -18,6 +18,7 @@ import com.swust.aliothmoon.utils.MiscUtils;
 import com.swust.aliothmoon.utils.RedisUtils;
 import com.swust.aliothmoon.utils.TransferUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     private final MonitorUserService userService;
     private final MonitorUserProfileMapper userProfileMapper;
     private final MonitorUserProfileService userProfileService;
+    @Value("${fileserver.prefix}")
+    private String prefix;
+
 
     @Override
     public R<LoggedInUserInfo> self() {
@@ -65,6 +69,8 @@ public class UserInfoServiceImpl implements UserInfoService {
             userInfo.setEmployeeId(profile.getEmployeeId());
             userInfo.setProfile(profile.getProfile());
         }
+
+        userInfo.setFileUrlPrefix(prefix);
 
         return R.ok(userInfo);
     }

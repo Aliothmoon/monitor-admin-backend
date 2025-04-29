@@ -11,6 +11,12 @@ spring:
 #      username:
 #      password:
 
+fileserver:
+  root: D:Project/JavaProjekte/PG/monitor-backend/file
+  prefix: "http://127.0.0.1/file"
+
+
+
 mybatis-flex:
   global-config:
     print-banner: off

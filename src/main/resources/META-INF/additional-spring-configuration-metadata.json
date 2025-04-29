@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "fileserver.root",
+      "type": "java.lang.String",
+      "description": "Description for fileserver.root."
+    },
+    {
+      "name": "fileserver.prefix",
+      "type": "java.lang.String",
+      "description": "Description for fileserver.prefix."
+    }
+  ] }
