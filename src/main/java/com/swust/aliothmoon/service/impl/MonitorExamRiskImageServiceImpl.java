@@ -34,4 +34,11 @@ public class MonitorExamRiskImageServiceImpl extends ServiceImpl<MonitorExamRisk
         queryWrapper.where(MONITOR_EXAM_RISK_IMAGE.EXAM_ID.eq(examId));
         return remove(queryWrapper);
     }
+
+    @Override
+    public long countByRiskImageId(Integer riskImageId) {
+        QueryWrapper queryWrapper = QueryWrapper.create();
+        queryWrapper.where(MONITOR_EXAM_RISK_IMAGE.RISK_IMAGE_ID.eq(riskImageId));
+        return count(queryWrapper);
+    }
 } 

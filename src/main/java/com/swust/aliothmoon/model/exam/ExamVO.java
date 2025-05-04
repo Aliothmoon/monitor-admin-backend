@@ -43,6 +43,11 @@ public class ExamVO {
      * 考试时长(分钟)
      */
     private Integer duration;
+    
+    /**
+     * 考试地点
+     */
+    private String location;
 
     /**
      * 考试状态 0-未开始 1-进行中 2-已结束
@@ -68,4 +73,6 @@ public class ExamVO {
      * 风险图片模板ID列表
      */
     private List<Integer> riskImageIds;
+
+
 } 

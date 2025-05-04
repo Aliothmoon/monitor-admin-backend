@@ -34,4 +34,11 @@ public class MonitorExamProcessServiceImpl extends ServiceImpl<MonitorExamProces
         queryWrapper.where(MONITOR_EXAM_PROCESS.EXAM_ID.eq(examId));
         return remove(queryWrapper);
     }
+    
+    @Override
+    public long countByProcessId(Integer processId) {
+        QueryWrapper queryWrapper = QueryWrapper.create();
+        queryWrapper.where(MONITOR_EXAM_PROCESS.PROCESS_ID.eq(processId));
+        return count(queryWrapper);
+    }
 } 

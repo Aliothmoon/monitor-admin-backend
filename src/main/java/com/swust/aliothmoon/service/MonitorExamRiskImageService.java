@@ -28,4 +28,12 @@ public interface MonitorExamRiskImageService extends IService<MonitorExamRiskIma
      * @return 是否成功
      */
     boolean removeByExamId(Integer examId);
+    
+    /**
+     * 根据风险图片模板ID查询关联的考试数量
+     *
+     * @param riskImageId 风险图片模板ID
+     * @return 关联的考试数量
+     */
+    long countByRiskImageId(Integer riskImageId);
 } 

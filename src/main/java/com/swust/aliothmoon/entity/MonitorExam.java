@@ -43,6 +43,9 @@ public class MonitorExam {
     @Column("duration")
     private Integer duration;
 
+    @Column("location")
+    private String location;
+
     @Column("status")
     private Integer status;
 

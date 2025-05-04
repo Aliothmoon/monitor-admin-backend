@@ -28,4 +28,12 @@ public interface MonitorExamProcessService extends IService<MonitorExamProcess> 
      * @return 是否成功
      */
     boolean removeByExamId(Integer examId);
+    
+    /**
+     * 根据进程ID查询关联的考试数量
+     *
+     * @param processId 进程ID
+     * @return 关联的考试数量
+     */
+    long countByProcessId(Integer processId);
 } 

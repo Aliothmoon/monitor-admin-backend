@@ -1,5 +1,6 @@
 package com.swust.aliothmoon.model.exam;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -43,6 +44,11 @@ public class ExamUpdateDTO {
      * 考试时长(分钟)
      */
     private Integer duration;
+    
+    /**
+     * 考试地点
+     */
+    private String location;
     
     /**
      * 可疑进程ID列表

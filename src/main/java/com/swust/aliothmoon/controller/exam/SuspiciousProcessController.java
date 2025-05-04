@@ -10,6 +10,7 @@ import com.swust.aliothmoon.model.process.SuspiciousProcessQueryDTO;
 import com.swust.aliothmoon.model.process.SuspiciousProcessUpdateDTO;
 import com.swust.aliothmoon.model.process.SuspiciousProcessVO;
 import com.swust.aliothmoon.service.MonitorSuspiciousProcessService;
+import com.swust.aliothmoon.service.MonitorExamProcessService;
 import com.swust.aliothmoon.utils.TransferUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ import static com.swust.aliothmoon.entity.table.MonitorSuspiciousProcessTableDef
 public class SuspiciousProcessController {
 
     private final MonitorSuspiciousProcessService suspiciousProcessService;
+    private final MonitorExamProcessService examProcessService;
 
     /**
      * 分页查询可疑进程名单
@@ -141,6 +143,11 @@ public class SuspiciousProcessController {
      */
     @DeleteMapping("/{id}")
     public R<Boolean> delete(@PathVariable Integer id) {
+        // 检查该进程是否已关联到考试
+        if (examProcessService.countByProcessId(id) > 0) {
+            return R.failed("该进程已被考试引用，无法删除");
+        }
+        
         boolean success = suspiciousProcessService.removeById(id);
         return success ? R.ok(true) : R.failed("删除失败");
     }

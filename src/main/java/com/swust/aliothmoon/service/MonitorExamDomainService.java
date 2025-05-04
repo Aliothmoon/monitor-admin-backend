@@ -28,4 +28,12 @@ public interface MonitorExamDomainService extends IService<MonitorExamDomain> {
      * @return 是否成功
      */
     boolean removeByExamId(Integer examId);
+    
+    /**
+     * 根据域名ID查询关联的考试数量
+     *
+     * @param domainId 域名ID
+     * @return 关联的考试数量
+     */
+    long countByDomainId(Integer domainId);
 } 

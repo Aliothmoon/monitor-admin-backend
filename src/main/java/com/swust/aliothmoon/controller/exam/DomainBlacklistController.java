@@ -10,6 +10,7 @@ import com.swust.aliothmoon.model.domain.DomainBlacklistQueryDTO;
 import com.swust.aliothmoon.model.domain.DomainBlacklistUpdateDTO;
 import com.swust.aliothmoon.model.domain.DomainBlacklistVO;
 import com.swust.aliothmoon.service.MonitorDomainBlacklistService;
+import com.swust.aliothmoon.service.MonitorExamDomainService;
 import com.swust.aliothmoon.utils.TransferUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ import static com.swust.aliothmoon.entity.table.MonitorDomainBlacklistTableDef.M
 public class DomainBlacklistController {
 
     private final MonitorDomainBlacklistService domainBlacklistService;
+    private final MonitorExamDomainService examDomainService;
 
     /**
      * 分页查询域名黑名单
@@ -176,6 +178,11 @@ public class DomainBlacklistController {
      */
     @DeleteMapping("/{id}")
     public R<Boolean> delete(@PathVariable Integer id) {
+        // 检查该域名是否已关联到考试
+        if (examDomainService.countByDomainId(id) > 0) {
+            return R.failed("该域名已被考试引用，无法删除");
+        }
+        
         boolean success = domainBlacklistService.removeById(id);
         return success ? R.ok(true) : R.failed("删除失败");
     }

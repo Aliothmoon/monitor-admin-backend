@@ -34,4 +34,11 @@ public class MonitorExamDomainServiceImpl extends ServiceImpl<MonitorExamDomainM
         queryWrapper.where(MONITOR_EXAM_DOMAIN.EXAM_ID.eq(examId));
         return remove(queryWrapper);
     }
+
+    @Override
+    public long countByDomainId(Integer domainId) {
+        QueryWrapper queryWrapper = QueryWrapper.create();
+        queryWrapper.where(MONITOR_EXAM_DOMAIN.DOMAIN_ID.eq(domainId));
+        return count(queryWrapper);
+    }
 } 
