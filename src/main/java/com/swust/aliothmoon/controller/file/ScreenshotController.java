@@ -21,7 +21,7 @@ import static com.swust.aliothmoon.entity.table.MonitorScreenshotTableDef.MONITO
 /**
  * 截图管理控制器
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

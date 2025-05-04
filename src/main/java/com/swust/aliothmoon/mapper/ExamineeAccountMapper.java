@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 考生账号 Mapper 接口
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Mapper

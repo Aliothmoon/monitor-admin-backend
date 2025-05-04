@@ -6,7 +6,7 @@ import com.swust.aliothmoon.entity.MonitorFileInfo;
 /**
  *  服务层。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorFileInfoService extends IService<MonitorFileInfo> {

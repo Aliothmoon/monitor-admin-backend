@@ -6,7 +6,7 @@ import com.swust.aliothmoon.entity.MonitorAlarmRecord;
 /**
  *  服务层。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorAlarmRecordService extends IService<MonitorAlarmRecord> {

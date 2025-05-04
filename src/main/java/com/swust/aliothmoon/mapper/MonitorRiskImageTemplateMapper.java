@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 风险图片模板 Mapper 接口。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Mapper

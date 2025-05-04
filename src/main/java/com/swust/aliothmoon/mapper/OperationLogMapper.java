@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  * 操作日志 Mapper 接口
  *
- * @author
+ * @author Aliothmoon
  *
  */
 @Mapper

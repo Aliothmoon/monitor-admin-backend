@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 截图管理服务实现类。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Service

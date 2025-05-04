@@ -23,7 +23,7 @@ import static com.swust.aliothmoon.entity.table.MonitorDomainBlacklistTableDef.M
 /**
  * 域名黑名单控制器
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

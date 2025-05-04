@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 截图更新数据传输对象
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  *  映射层。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Mapper

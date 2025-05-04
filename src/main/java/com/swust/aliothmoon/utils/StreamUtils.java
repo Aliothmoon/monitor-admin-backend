@@ -13,7 +13,7 @@ import static java.util.function.Function.identity;
 /**
  * stream 流工具类
  *
- * @author Czy
+ * @author Aliothmoon
  */
 @UtilityClass
 public class StreamUtils {

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 用户个人信息控制器
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

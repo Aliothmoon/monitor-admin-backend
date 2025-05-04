@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 /**
  * 考生账号与考生信息关联的视图对象
  *
- * @author
+ * @author Aliothmoon
  *
  */
 @Data

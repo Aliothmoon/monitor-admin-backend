@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 /**
  * 考试查询数据传输对象
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

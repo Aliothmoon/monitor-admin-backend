@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 截图管理服务接口。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorScreenshotService extends IService<MonitorScreenshot> {

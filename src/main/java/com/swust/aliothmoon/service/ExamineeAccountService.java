@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * 考生账号服务接口
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface ExamineeAccountService extends IService<ExamineeAccount> {

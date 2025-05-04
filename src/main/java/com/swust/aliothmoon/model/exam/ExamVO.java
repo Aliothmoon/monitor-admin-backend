@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 考试视图对象
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

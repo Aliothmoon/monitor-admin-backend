@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 风险图片模板服务实现类。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Service

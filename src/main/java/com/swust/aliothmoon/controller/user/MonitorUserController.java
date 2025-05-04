@@ -23,7 +23,7 @@ import static com.swust.aliothmoon.utils.MiscUtils.eq;
 /**
  *  MonitorUserController
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

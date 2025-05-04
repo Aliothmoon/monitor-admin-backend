@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 可疑进程名单更新数据传输对象
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

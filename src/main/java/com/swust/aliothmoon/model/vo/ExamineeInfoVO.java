@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * 考生信息响应VO
  *
- * @author Alioth
+ * @author Aliothmoon
  */
 @Data
 public class ExamineeInfoVO {

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 域名黑名单服务接口。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorDomainBlacklistService extends IService<MonitorDomainBlacklist> {

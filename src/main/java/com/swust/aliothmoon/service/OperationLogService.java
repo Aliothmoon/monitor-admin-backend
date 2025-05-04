@@ -8,7 +8,7 @@ import com.swust.aliothmoon.model.dto.PageInfo;
 /**
  * 操作日志服务接口
  *
- * @author
+ * @author Aliothmoon
  *
  */
 public interface OperationLogService extends IService<OperationLog> {

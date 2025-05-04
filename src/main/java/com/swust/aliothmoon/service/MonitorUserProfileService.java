@@ -8,7 +8,7 @@ import com.swust.aliothmoon.model.profile.UserProfileVO;
 /**
  * 用户个人信息服务接口
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorUserProfileService extends IService<MonitorUserProfile> {

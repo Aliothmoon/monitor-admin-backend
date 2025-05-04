@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 /**
  * 风险图片模板视图对象
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

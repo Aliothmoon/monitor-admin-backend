@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 考试-域名黑名单关联表服务接口
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorExamDomainService extends IService<MonitorExamDomain> {

@@ -14,7 +14,7 @@ import static com.swust.aliothmoon.entity.table.MonitorExamDomainTableDef.MONITO
 /**
  * 考试-域名黑名单关联表服务实现类
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Service

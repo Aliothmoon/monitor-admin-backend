@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 录屏管理服务接口。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorScreenRecordService extends IService<MonitorScreenRecord> {

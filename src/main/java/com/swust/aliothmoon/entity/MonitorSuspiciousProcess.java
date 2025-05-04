@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 /**
  * 可疑进程名单实体类。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

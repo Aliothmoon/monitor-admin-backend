@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 域名黑名单查询数据传输对象
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

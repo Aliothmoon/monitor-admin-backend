@@ -40,7 +40,7 @@ import static com.swust.aliothmoon.controller.exam.MonitorExamController.getRand
 /**
  * 考生信息服务实现类
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Service

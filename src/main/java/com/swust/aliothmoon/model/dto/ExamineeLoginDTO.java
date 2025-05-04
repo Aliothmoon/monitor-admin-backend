@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 考生登录请求DTO
  *
- * @author Alioth
+ * @author Aliothmoon
  */
 @Data
 public class ExamineeLoginDTO {

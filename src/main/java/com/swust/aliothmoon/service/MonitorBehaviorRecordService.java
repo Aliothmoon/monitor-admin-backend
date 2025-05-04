@@ -6,7 +6,7 @@ import com.swust.aliothmoon.entity.MonitorBehaviorRecord;
 /**
  *  服务层。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorBehaviorRecordService extends IService<MonitorBehaviorRecord> {

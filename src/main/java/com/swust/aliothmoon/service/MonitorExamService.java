@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 考试管理服务接口。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorExamService extends IService<MonitorExam> {

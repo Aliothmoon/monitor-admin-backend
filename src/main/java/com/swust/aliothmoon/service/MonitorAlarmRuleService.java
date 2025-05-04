@@ -6,7 +6,7 @@ import com.swust.aliothmoon.entity.MonitorAlarmRule;
 /**
  *  服务层。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorAlarmRuleService extends IService<MonitorAlarmRule> {

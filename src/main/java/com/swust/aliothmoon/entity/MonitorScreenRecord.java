@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 /**
  * 录屏管理实体类。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

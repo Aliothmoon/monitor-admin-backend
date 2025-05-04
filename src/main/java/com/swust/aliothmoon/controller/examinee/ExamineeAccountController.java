@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * 考生账号Controller
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

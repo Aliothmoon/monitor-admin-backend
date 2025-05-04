@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 可疑进程名单服务接口。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorSuspiciousProcessService extends IService<MonitorSuspiciousProcess> {

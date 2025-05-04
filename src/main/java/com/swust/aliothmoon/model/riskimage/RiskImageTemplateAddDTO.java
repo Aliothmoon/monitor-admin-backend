@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 风险图片模板添加数据传输对象
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

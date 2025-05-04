@@ -6,7 +6,7 @@ import com.swust.aliothmoon.entity.MonitorExamDomain;
 /**
  * 考试-域名黑名单关联表Mapper接口
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorExamDomainMapper extends BaseMapper<MonitorExamDomain> {

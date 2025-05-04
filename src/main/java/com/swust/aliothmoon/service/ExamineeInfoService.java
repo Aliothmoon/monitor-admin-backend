@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * 考生信息服务接口
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface ExamineeInfoService extends IService<ExamineeInfo> {

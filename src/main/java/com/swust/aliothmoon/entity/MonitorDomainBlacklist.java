@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 /**
  * 域名黑名单实体类。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

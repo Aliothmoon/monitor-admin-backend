@@ -16,7 +16,7 @@ import static com.swust.aliothmoon.entity.table.MonitorExamTableDef.MONITOR_EXAM
 /**
  * 考试管理服务实现类。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Service

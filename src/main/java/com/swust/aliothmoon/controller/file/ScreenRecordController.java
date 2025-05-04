@@ -21,7 +21,7 @@ import static com.swust.aliothmoon.entity.table.MonitorScreenRecordTableDef.MONI
 /**
  * 录屏管理控制器
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

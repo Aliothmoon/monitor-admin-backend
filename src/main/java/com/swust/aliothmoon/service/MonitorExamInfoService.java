@@ -6,7 +6,7 @@ import com.swust.aliothmoon.entity.MonitorExamInfo;
 /**
  *  服务层。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorExamInfoService extends IService<MonitorExamInfo> {

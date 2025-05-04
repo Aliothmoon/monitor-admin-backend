@@ -34,7 +34,7 @@ import static com.swust.aliothmoon.constant.Keys.CANDIDATE_TOKEN;
 /**
  * 考生账号服务实现类
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Service

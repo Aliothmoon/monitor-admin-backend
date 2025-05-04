@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 /**
  * 考生信息实体类
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Data

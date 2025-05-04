@@ -24,7 +24,7 @@ import static com.swust.aliothmoon.entity.table.MonitorRiskImageTemplateTableDef
 /**
  * 风险图片模板控制器
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

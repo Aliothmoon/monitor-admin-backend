@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 风险图片模板服务接口。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorRiskImageTemplateService extends IService<MonitorRiskImageTemplate> {

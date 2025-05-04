@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * 用户个人信息 Mapper 接口
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Mapper

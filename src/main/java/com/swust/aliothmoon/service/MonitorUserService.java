@@ -8,7 +8,7 @@ import com.swust.aliothmoon.model.dto.PageInfo;
 /**
  *  服务层。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorUserService extends IService<MonitorUser> {

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 /**
  * 考生信息Controller
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

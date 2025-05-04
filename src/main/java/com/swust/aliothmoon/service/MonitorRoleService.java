@@ -6,7 +6,7 @@ import com.swust.aliothmoon.entity.MonitorRole;
 /**
  *  服务层。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorRoleService extends IService<MonitorRole> {

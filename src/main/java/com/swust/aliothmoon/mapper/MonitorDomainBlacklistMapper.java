@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 域名黑名单 Mapper 接口。
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Mapper

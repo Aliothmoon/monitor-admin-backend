@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 考试-风险图片模板关联表服务接口
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 public interface MonitorExamRiskImageService extends IService<MonitorExamRiskImage> {

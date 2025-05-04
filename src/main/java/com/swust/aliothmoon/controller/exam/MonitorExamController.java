@@ -31,7 +31,7 @@ import static com.swust.aliothmoon.entity.table.MonitorExamTableDef.MONITOR_EXAM
 /**
  * 考试管理控制器
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @RestController

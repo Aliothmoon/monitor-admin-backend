@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * sql操作工具类
  *
- * @author ruoyi
+ * @author Aliothmoon
  */
 @UtilityClass
 public class SqlUtil {

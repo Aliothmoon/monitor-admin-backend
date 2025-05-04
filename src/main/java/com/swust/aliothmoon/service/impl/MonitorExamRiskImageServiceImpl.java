@@ -14,7 +14,7 @@ import static com.swust.aliothmoon.entity.table.MonitorExamRiskImageTableDef.MON
 /**
  * 考试-风险图片模板关联表服务实现类
  *
- * @author Alioth
+ * @author Aliothmoon
  *
  */
 @Service
