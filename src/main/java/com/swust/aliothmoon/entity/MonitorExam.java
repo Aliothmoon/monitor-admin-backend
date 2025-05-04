@@ -2,6 +2,7 @@ package com.swust.aliothmoon.entity;
 
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 public class MonitorExam {
 
 
-    @Id
+    @Id(keyType = KeyType.Auto)
     @Column("id")
     private Integer id;
 

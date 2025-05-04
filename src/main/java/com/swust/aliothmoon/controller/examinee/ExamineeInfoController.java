@@ -79,13 +79,21 @@ public class ExamineeInfoController {
     @PostMapping("/saveExamineeInfo")
     @Transactional
     public R<Boolean> saveExamineeInfo(@RequestBody ExamineeInfo examineeInfo) {
-        // 检查姓名和学号是否重复
+        // 检查学号是否重复
         String name = examineeInfo.getName();
         String studentId = examineeInfo.getStudentId();
-        if (name != null && studentId != null) {
-            boolean isDuplicate = examineeInfoService.checkDuplicateNameAndStudentId(name, studentId);
-            if (isDuplicate) {
-                return R.failed("考生姓名和学号已存在，请勿重复添加");
+        if (studentId != null) {
+            ExamineeInfo existingExaminee = examineeInfoService.checkDuplicateStudentId(studentId);
+            if (existingExaminee != null) {
+                // 如果学号已存在，更新考生信息而不是报错
+                existingExaminee.setName(name);
+                existingExaminee.setCollege(examineeInfo.getCollege());
+                existingExaminee.setClassName(examineeInfo.getClassName());
+                existingExaminee.setUpdatedAt(LocalDateTime.now());
+                existingExaminee.setUpdatedBy(UserInfoContext.get().getUserId());
+
+                boolean success = examineeInfoService.updateById(existingExaminee);
+                return R.ok(success);
             }
         }
 
@@ -110,15 +118,14 @@ public class ExamineeInfoController {
      */
     @PutMapping("/updateExamineeInfo")
     public R<Boolean> updateExamineeInfo(@RequestBody ExamineeInfo examineeInfo) {
-        // 检查姓名和学号是否重复(排除自身)
-        String name = examineeInfo.getName();
+        // 检查学号是否重复(排除自身)
         String studentId = examineeInfo.getStudentId();
         Integer examineeInfoId = examineeInfo.getExamineeInfoId();
-        if (name != null && studentId != null && examineeInfoId != null) {
-            boolean isDuplicate = examineeInfoService.checkDuplicateNameAndStudentIdExcludeId(
-                    name, studentId, examineeInfoId);
+        if (studentId != null && examineeInfoId != null) {
+            boolean isDuplicate = examineeInfoService.checkDuplicateStudentIdExcludeId(
+                    studentId, examineeInfoId);
             if (isDuplicate) {
-                return R.failed("考生姓名和学号已存在，请勿重复添加");
+                return R.failed("学号已存在，请勿重复添加");
             }
         }
 

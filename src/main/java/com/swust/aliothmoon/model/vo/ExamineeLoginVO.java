@@ -13,12 +13,12 @@ public class ExamineeLoginVO {
      * JWT令牌
      */
     private String token;
-    
+
     /**
      * 考生账号ID
      */
     private Integer accountId;
-    
+
     /**
      * 考试ID
      */

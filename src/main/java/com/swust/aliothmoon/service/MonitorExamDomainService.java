@@ -20,7 +20,7 @@ public interface MonitorExamDomainService extends IService<MonitorExamDomain> {
      * @return 域名黑名单关联列表
      */
     List<MonitorExamDomain> listByExamId(Integer examId);
-    
+
     /**
      * 根据考试ID删除关联关系
      *
@@ -28,7 +28,7 @@ public interface MonitorExamDomainService extends IService<MonitorExamDomain> {
      * @return 是否成功
      */
     boolean removeByExamId(Integer examId);
-    
+
     /**
      * 根据域名ID查询关联的考试数量
      *

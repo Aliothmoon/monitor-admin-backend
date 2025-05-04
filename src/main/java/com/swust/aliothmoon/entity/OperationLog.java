@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 /**
  * 操作日志实体类
  *
- * @author 
+ * @author
  *
  */
 @Data

@@ -14,7 +14,7 @@ import com.swust.aliothmoon.model.dto.PageInfo;
 public interface MonitorUserService extends IService<MonitorUser> {
 
     TableDataInfo<MonitorUser> getPageData(PageInfo page);
-    
+
     /**
      * 根据条件获取分页数据
      *

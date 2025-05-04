@@ -13,7 +13,7 @@ public class ExamineeLoginDTO {
      * 账号
      */
     private String account;
-    
+
     /**
      * 密码
      */

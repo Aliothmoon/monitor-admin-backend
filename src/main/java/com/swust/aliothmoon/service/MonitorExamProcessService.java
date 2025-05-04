@@ -20,7 +20,7 @@ public interface MonitorExamProcessService extends IService<MonitorExamProcess> 
      * @return 可疑进程关联列表
      */
     List<MonitorExamProcess> listByExamId(Integer examId);
-    
+
     /**
      * 根据考试ID删除关联关系
      *
@@ -28,7 +28,7 @@ public interface MonitorExamProcessService extends IService<MonitorExamProcess> 
      * @return 是否成功
      */
     boolean removeByExamId(Integer examId);
-    
+
     /**
      * 根据进程ID查询关联的考试数量
      *

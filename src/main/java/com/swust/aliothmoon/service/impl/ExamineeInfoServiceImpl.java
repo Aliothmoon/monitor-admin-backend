@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.swust.aliothmoon.controller.exam.MonitorExamController.getRandomPassword;
+
 /**
  * 考生信息服务实现类
  *
@@ -119,6 +121,35 @@ public class ExamineeInfoServiceImpl extends ServiceImpl<ExamineeInfoMapper, Exa
     }
 
     @Override
+    public ExamineeInfo checkDuplicateStudentId(String studentId) {
+        if (!StringUtils.hasText(studentId)) {
+            return null;
+        }
+
+        ExamineeInfoTableDef examineeInfo = ExamineeInfoTableDef.EXAMINEE_INFO;
+
+        // 查询学号匹配的记录
+        return QueryChain.of(ExamineeInfo.class)
+                .where(examineeInfo.STUDENT_ID.eq(studentId))
+                .one();
+    }
+
+    @Override
+    public boolean checkDuplicateStudentIdExcludeId(String studentId, Integer excludeId) {
+        if (!StringUtils.hasText(studentId) || excludeId == null) {
+            return false;
+        }
+
+        ExamineeInfoTableDef examineeInfo = ExamineeInfoTableDef.EXAMINEE_INFO;
+
+        // 查询学号匹配且ID不等于excludeId的记录
+        return QueryChain.of(ExamineeInfo.class)
+                .where(examineeInfo.STUDENT_ID.eq(studentId))
+                .and(examineeInfo.EXAMINEE_INFO_ID.ne(excludeId))
+                .exists();
+    }
+
+    @Override
     @Transactional
     public List<Map<String, Object>> importExamineesFromExcel(MultipartFile file, Integer examId) throws IOException {
         List<Map<String, Object>> resultList = new ArrayList<>();
@@ -155,19 +186,30 @@ public class ExamineeInfoServiceImpl extends ServiceImpl<ExamineeInfoMapper, Exa
                         continue;
                     }
 
-                    // 检查学号+姓名是否已存在
-                    boolean exists = checkDuplicateNameAndStudentId(name, studentId);
+                    // 首先检查学号是否已存在
+                    ExamineeInfo existingExamineeByStudentId = checkDuplicateStudentId(studentId);
 
                     ExamineeInfo examineeInfo;
-                    if (exists) {
-                        // 如果已存在，获取已有记录
-                        examineeInfo = QueryChain.of(ExamineeInfo.class)
-                                .where(ExamineeInfoTableDef.EXAMINEE_INFO.NAME.eq(name))
-                                .and(ExamineeInfoTableDef.EXAMINEE_INFO.STUDENT_ID.eq(studentId))
-                                .one();
+                    if (existingExamineeByStudentId != null) {
+                        // 如果学号已存在，获取已有记录并更新信息
+                        examineeInfo = existingExamineeByStudentId;
+
+                        // 更新考生信息
+                        examineeInfo.setName(name); // 更新姓名
+                        examineeInfo.setCollege(college);
+                        examineeInfo.setClassName(className);
+                        examineeInfo.setUpdatedAt(LocalDateTime.now());
+                        examineeInfo.setUpdatedBy(userId);
+
+                        // 保存更新后的信息
+                        updateById(examineeInfo);
 
                         resultMap.put("status", "更新");
-                        resultMap.put("message", "考生信息已存在，更新成功");
+                        if (existingExamineeByStudentId.getName().equals(name)) {
+                            resultMap.put("message", "考生信息已存在，更新成功");
+                        } else {
+                            resultMap.put("message", "学号已存在但姓名不同，已更新姓名为：" + name);
+                        }
                     } else {
                         // 如果不存在，创建新记录
                         examineeInfo = new ExamineeInfo();
@@ -197,7 +239,7 @@ public class ExamineeInfoServiceImpl extends ServiceImpl<ExamineeInfoMapper, Exa
                         account.setExamineeInfoId(examineeInfo.getExamineeInfoId());
                         account.setExamId(examId);
                         account.setAccount(studentId); // 使用学号作为默认账号
-                        account.setPassword(generateRandomPassword(6)); // 生成6位随机密码
+                        account.setPassword(generateRandomPassword(8)); // 生成6位随机密码
                         account.setStatus(1); // 未登录状态
                         account.setCreatedAt(LocalDateTime.now());
                         account.setUpdatedAt(LocalDateTime.now());
@@ -212,7 +254,7 @@ public class ExamineeInfoServiceImpl extends ServiceImpl<ExamineeInfoMapper, Exa
                         // 已有账号，不重复创建
                         ExamineeAccount existingAccount = existingAccounts.get(0);
                         resultMap.put("account", existingAccount.getAccount());
-                        resultMap.put("password", "********"); // 不显示已有密码
+                        resultMap.put("password", existingAccount.getPassword()); // 不显示已有密码
                         resultMap.put("message", resultMap.get("message") + "，但该考生已有考试账号");
                     }
 
@@ -321,13 +363,7 @@ public class ExamineeInfoServiceImpl extends ServiceImpl<ExamineeInfoMapper, Exa
      * 生成随机密码
      */
     private String generateRandomPassword(int length) {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            int index = (int) (Math.random() * chars.length());
-            sb.append(chars.charAt(index));
-        }
-        return sb.toString();
+        return getRandomPassword(length);
     }
 
     @Override

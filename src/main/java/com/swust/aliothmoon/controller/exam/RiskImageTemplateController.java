@@ -9,8 +9,8 @@ import com.swust.aliothmoon.model.riskimage.RiskImageTemplateAddDTO;
 import com.swust.aliothmoon.model.riskimage.RiskImageTemplateQueryDTO;
 import com.swust.aliothmoon.model.riskimage.RiskImageTemplateUpdateDTO;
 import com.swust.aliothmoon.model.riskimage.RiskImageTemplateVO;
-import com.swust.aliothmoon.service.MonitorRiskImageTemplateService;
 import com.swust.aliothmoon.service.MonitorExamRiskImageService;
+import com.swust.aliothmoon.service.MonitorRiskImageTemplateService;
 import com.swust.aliothmoon.utils.TransferUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
@@ -210,7 +210,7 @@ public class RiskImageTemplateController {
         if (examRiskImageService.countByRiskImageId(id) > 0) {
             return R.failed("该风险图片模板已被考试引用，无法删除");
         }
-        
+
         boolean success = riskImageTemplateService.removeById(id);
         return success ? R.ok(true) : R.failed("删除失败");
     }

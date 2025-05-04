@@ -59,6 +59,23 @@ public interface ExamineeInfoService extends IService<ExamineeInfo> {
     boolean checkDuplicateNameAndStudentIdExcludeId(String name, String studentId, Integer excludeId);
 
     /**
+     * 检查学号是否已存在
+     *
+     * @param studentId 学号
+     * @return 如果已存在返回ExamineeInfo对象，否则返回null
+     */
+    ExamineeInfo checkDuplicateStudentId(String studentId);
+
+    /**
+     * 检查学号是否已存在（排除指定ID）
+     *
+     * @param studentId 学号
+     * @param excludeId 需要排除的考生信息ID
+     * @return 如果已存在返回true，否则返回false
+     */
+    boolean checkDuplicateStudentIdExcludeId(String studentId, Integer excludeId);
+
+    /**
      * 从Excel文件导入考生信息并关联到考试
      *
      * @param file Excel文件

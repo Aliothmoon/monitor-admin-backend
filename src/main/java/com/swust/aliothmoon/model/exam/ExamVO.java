@@ -43,7 +43,7 @@ public class ExamVO {
      * 考试时长(分钟)
      */
     private Integer duration;
-    
+
     /**
      * 考试地点
      */
@@ -58,17 +58,17 @@ public class ExamVO {
      * 创建时间
      */
     private LocalDateTime createdAt;
-    
+
     /**
      * 可疑进程ID列表
      */
     private List<Integer> suspiciousProcessIds;
-    
+
     /**
      * 域名黑名单ID列表
      */
     private List<Integer> blacklistDomainIds;
-    
+
     /**
      * 风险图片模板ID列表
      */

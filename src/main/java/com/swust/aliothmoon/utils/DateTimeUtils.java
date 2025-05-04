@@ -24,6 +24,7 @@ public class DateTimeUtils {
         FORMATTERS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         FORMATTERS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
         FORMATTERS.add(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        FORMATTERS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX"));
     }
 
     /**

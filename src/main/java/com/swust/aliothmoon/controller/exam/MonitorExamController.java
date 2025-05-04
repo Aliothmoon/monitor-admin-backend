@@ -4,25 +4,16 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.swust.aliothmoon.context.UserInfoContext;
 import com.swust.aliothmoon.define.R;
-import com.swust.aliothmoon.entity.ExamineeAccount;
-import com.swust.aliothmoon.entity.ExamineeInfo;
-import com.swust.aliothmoon.entity.MonitorExam;
-import com.swust.aliothmoon.entity.MonitorExamDomain;
-import com.swust.aliothmoon.entity.MonitorExamProcess;
-import com.swust.aliothmoon.entity.MonitorExamRiskImage;
+import com.swust.aliothmoon.entity.*;
 import com.swust.aliothmoon.model.exam.ExamCreateDTO;
 import com.swust.aliothmoon.model.exam.ExamQueryDTO;
 import com.swust.aliothmoon.model.exam.ExamUpdateDTO;
 import com.swust.aliothmoon.model.exam.ExamVO;
 import com.swust.aliothmoon.model.vo.ExamineeAccountWithInfoVO;
-import com.swust.aliothmoon.service.ExamineeAccountService;
-import com.swust.aliothmoon.service.ExamineeInfoService;
-import com.swust.aliothmoon.service.MonitorExamDomainService;
-import com.swust.aliothmoon.service.MonitorExamProcessService;
-import com.swust.aliothmoon.service.MonitorExamRiskImageService;
-import com.swust.aliothmoon.service.MonitorExamService;
+import com.swust.aliothmoon.service.*;
 import com.swust.aliothmoon.utils.TransferUtils;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,12 +39,23 @@ import static com.swust.aliothmoon.entity.table.MonitorExamTableDef.MONITOR_EXAM
 @RequiredArgsConstructor
 public class MonitorExamController {
 
+    public static final String chars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghjklmnopqrstuvwxyz123456789";
     private final MonitorExamService examService;
     private final MonitorExamProcessService examProcessService;
     private final MonitorExamDomainService examDomainService;
     private final MonitorExamRiskImageService examRiskImageService;
     private final ExamineeInfoService examineeInfoService;
     private final ExamineeAccountService examineeAccountService;
+
+    @NotNull
+    public static String getRandomPassword(int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int index = (int) (Math.random() * chars.length());
+            sb.append(chars.charAt(index));
+        }
+        return sb.toString();
+    }
 
     /**
      * 分页查询考试列表
@@ -403,17 +405,17 @@ public class MonitorExamController {
             @RequestParam(required = false) String studentId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String college) {
-        
+
         // 检查考试是否存在
         MonitorExam exam = examService.getById(examId);
         if (exam == null) {
             return R.failed("考试不存在");
         }
-        
+
         // 获取考试的考生账号列表
         Page<ExamineeAccountWithInfoVO> page = examineeAccountService.getAllAccountsWithInfoByExamId(
                 pageNum, pageSize, null, examId, name, studentId, college, null);
-        
+
         return R.ok(page);
     }
 
@@ -428,44 +430,45 @@ public class MonitorExamController {
     public R<Boolean> addExamineeToExam(@RequestBody Map<String, Integer> requestMap) {
         Integer examId = requestMap.get("examId");
         Integer examineeInfoId = requestMap.get("examineeInfoId");
-        
+
         if (examId == null || examineeInfoId == null) {
             return R.failed("考试ID和考生信息ID不能为空");
         }
-        
+
         // 检查考试是否存在
         MonitorExam exam = examService.getById(examId);
         if (exam == null) {
             return R.failed("考试不存在");
         }
-        
+
         // 检查考生信息是否存在
         ExamineeInfo examineeInfo = examineeInfoService.getById(examineeInfoId);
         if (examineeInfo == null) {
             return R.failed("考生信息不存在");
         }
-        
+
         // 检查是否已经有账号
         List<ExamineeAccount> existingAccounts = examineeAccountService.getByExamineeInfoIdAndExamId(examineeInfoId, examId);
         if (!existingAccounts.isEmpty()) {
-            return R.failed("该考生已经在此考试中注册");
+            // 已经有账号，直接返回成功
+            return R.ok(true, "该考生已经在此考试中注册");
         }
-        
+
         // 创建考生账号
         String account = generateAccountFromStudentId(examineeInfo.getStudentId());
-        String password = generateRandomPassword(6); // 生成6位随机密码
-        
+        String password = generateRandomPassword(8); // 生成6位随机密码
+
         ExamineeAccount examineeAccount = new ExamineeAccount();
         examineeAccount.setExamineeInfoId(examineeInfoId);
         examineeAccount.setExamId(examId);
         examineeAccount.setAccount(account);
         examineeAccount.setPassword(password);
-        examineeAccount.setStatus(0); // 未登录状态
+        examineeAccount.setStatus(1); // 未登录状态
         examineeAccount.setCreatedAt(LocalDateTime.now());
         examineeAccount.setUpdatedAt(LocalDateTime.now());
         examineeAccount.setCreatedBy(UserInfoContext.get().getUserId());
         examineeAccount.setUpdatedBy(UserInfoContext.get().getUserId());
-        
+
         boolean success = examineeAccountService.save(examineeAccount);
         return R.ok(success);
     }
@@ -485,18 +488,18 @@ public class MonitorExamController {
         if (exam == null) {
             return R.failed("考试不存在");
         }
-        
+
         // 检查账号是否存在
         ExamineeAccount account = examineeAccountService.getById(accountId);
         if (account == null) {
             return R.failed("考生账号不存在");
         }
-        
+
         // 检查账号是否属于该考试
         if (!account.getExamId().equals(examId)) {
             return R.failed("该账号不属于该考试");
         }
-        
+
         // 删除考生账号
         boolean success = examineeAccountService.removeById(accountId);
         return R.ok(success);
@@ -517,45 +520,45 @@ public class MonitorExamController {
             Integer accountId = (Integer) requestMap.get("id");
             String account = (String) requestMap.get("account");
             String password = (String) requestMap.get("password");
-            
+
             ExamineeAccount examineeAccount = examineeAccountService.getById(accountId);
             if (examineeAccount == null) {
                 return R.failed("考生账号不存在");
             }
-            
+
             if (account != null && !account.isEmpty()) {
                 examineeAccount.setAccount(account);
             }
-            
+
             if (password != null && !password.isEmpty()) {
                 examineeAccount.setPassword(password);
             }
-            
+
             examineeAccount.setUpdatedAt(LocalDateTime.now());
             examineeAccount.setUpdatedBy(UserInfoContext.get().getUserId());
-            
+
             boolean success = examineeAccountService.updateById(examineeAccount);
             return R.ok(success);
-            
+
         } else if (requestMap.containsKey("examineeInfoId") && requestMap.containsKey("examId")) {
             // 为考生创建新账号
             Integer examineeInfoId = (Integer) requestMap.get("examineeInfoId");
             Integer examId = (Integer) requestMap.get("examId");
             String account = (String) requestMap.get("account");
             String password = (String) requestMap.get("password");
-            
+
             // 检查考试是否存在
             MonitorExam exam = examService.getById(examId);
             if (exam == null) {
                 return R.failed("考试不存在");
             }
-            
+
             // 检查考生信息是否存在
             ExamineeInfo examineeInfo = examineeInfoService.getById(examineeInfoId);
             if (examineeInfo == null) {
                 return R.failed("考生信息不存在");
             }
-            
+
             // 检查是否已经有账号
             List<ExamineeAccount> existingAccounts = examineeAccountService.getByExamineeInfoIdAndExamId(examineeInfoId, examId);
             if (!existingAccounts.isEmpty()) {
@@ -564,14 +567,14 @@ public class MonitorExamController {
                 if (account != null && !account.isEmpty()) {
                     existingAccount.setAccount(account);
                 }
-                
+
                 if (password != null && !password.isEmpty()) {
                     existingAccount.setPassword(password);
                 }
-                
+
                 existingAccount.setUpdatedAt(LocalDateTime.now());
                 existingAccount.setUpdatedBy(UserInfoContext.get().getUserId());
-                
+
                 boolean success = examineeAccountService.updateById(existingAccount);
                 return R.ok(success);
             } else {
@@ -581,20 +584,20 @@ public class MonitorExamController {
                 examineeAccount.setExamId(examId);
                 examineeAccount.setAccount(account);
                 examineeAccount.setPassword(password);
-                examineeAccount.setStatus(0); // 未登录状态
+                examineeAccount.setStatus(1); // 未登录状态
                 examineeAccount.setCreatedAt(LocalDateTime.now());
                 examineeAccount.setUpdatedAt(LocalDateTime.now());
                 examineeAccount.setCreatedBy(UserInfoContext.get().getUserId());
                 examineeAccount.setUpdatedBy(UserInfoContext.get().getUserId());
-                
+
                 boolean success = examineeAccountService.save(examineeAccount);
                 return R.ok(success);
             }
         }
-        
+
         return R.failed("请求参数不正确");
     }
-    
+
     /**
      * 手动导入考生信息
      *
@@ -608,21 +611,21 @@ public class MonitorExamController {
         if (file.isEmpty()) {
             return R.failed("上传文件为空");
         }
-        
+
         // 检查考试是否存在
         MonitorExam exam = examService.getById(examId);
         if (exam == null) {
             return R.failed("考试不存在");
         }
-        
+
         try {
             // 解析Excel文件并导入考生
             List<Map<String, Object>> importResult = examineeInfoService.importExamineesFromExcel(file, examId);
-            
+
             Map<String, Object> result = new HashMap<>();
             result.put("total", importResult.size());
             result.put("details", importResult);
-            
+
             return R.ok(result);
         } catch (IOException e) {
             return R.failed("文件解析失败: " + e.getMessage());
@@ -630,7 +633,7 @@ public class MonitorExamController {
             return R.failed("导入失败: " + e.getMessage());
         }
     }
-    
+
     /**
      * 下载考生导入模板
      *
@@ -642,7 +645,7 @@ public class MonitorExamController {
         // 这里留空，在服务层实现
         examineeInfoService.generateAndDownloadTemplate();
     }
-    
+
     /**
      * 导出考试考生名单
      *
@@ -655,11 +658,11 @@ public class MonitorExamController {
         if (exam == null) {
             throw new RuntimeException("考试不存在");
         }
-        
+
         // 导出考生名单
         examineeInfoService.exportExamineesInfo(examId, exam.getName(), exam.getLocation());
     }
-    
+
     /**
      * 从学号生成默认账号
      */
@@ -667,17 +670,11 @@ public class MonitorExamController {
         // 简单实现：使用学号作为账号
         return studentId;
     }
-    
+
     /**
      * 生成随机密码
      */
     private String generateRandomPassword(int length) {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            int index = (int) (Math.random() * chars.length());
-            sb.append(chars.charAt(index));
-        }
-        return sb.toString();
+        return getRandomPassword(length);
     }
 } 

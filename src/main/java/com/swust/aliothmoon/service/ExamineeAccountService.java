@@ -36,7 +36,7 @@ public interface ExamineeAccountService extends IService<ExamineeAccount> {
      * @return token字符串
      */
     String generateExamineeToken(ExamineeAccount examineeAccount);
-    
+
     /**
      * 处理考生登录
      *
@@ -44,7 +44,7 @@ public interface ExamineeAccountService extends IService<ExamineeAccount> {
      * @return 登录结果
      */
     ExamineeLoginVO login(ExamineeLoginDTO loginDTO);
-    
+
     /**
      * 获取考生信息
      *
@@ -52,7 +52,7 @@ public interface ExamineeAccountService extends IService<ExamineeAccount> {
      * @return 考生信息
      */
     ExamineeInfoVO getExamineeInfo(Integer accountId);
-    
+
     /**
      * 创建考生账号
      *
@@ -61,7 +61,7 @@ public interface ExamineeAccountService extends IService<ExamineeAccount> {
      * @return 是否成功
      */
     boolean createExamineeAccount(ExamineeAccount examineeAccount, Integer operatorId);
-    
+
     /**
      * 更新考生账号
      *

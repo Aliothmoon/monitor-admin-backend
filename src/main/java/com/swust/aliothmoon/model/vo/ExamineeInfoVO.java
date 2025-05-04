@@ -15,12 +15,12 @@ public class ExamineeInfoVO {
      * 考生账号信息
      */
     private ExamineeAccount account;
-    
+
     /**
      * 考试ID
      */
     private Integer examId;
-    
+
     /**
      * 考生个人信息
      */

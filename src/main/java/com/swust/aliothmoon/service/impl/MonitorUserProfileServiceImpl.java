@@ -32,12 +32,12 @@ public class MonitorUserProfileServiceImpl extends ServiceImpl<MonitorUserProfil
     @Transactional
     public UserProfileVO getByUserId(Integer userId) {
         MonitorUserProfile profile = userProfileMapper.getByUserId(userId);
-        
+
         // 如果找不到个人信息，则创建一个默认的
         if (profile == null) {
             profile = createDefaultProfile(userId);
         }
-        
+
         return TransferUtils.to(profile, UserProfileVO.class);
     }
 
@@ -51,7 +51,7 @@ public class MonitorUserProfileServiceImpl extends ServiceImpl<MonitorUserProfil
         // 查询用户信息，获取用户名
         MonitorUser user = userMapper.selectOneById(userId);
         String username = user != null ? user.getUsername() : "用户" + userId;
-        
+
         LocalDateTime now = LocalDateTime.now();
         MonitorUserProfile profile = new MonitorUserProfile();
         profile.setUserId(userId);
@@ -60,10 +60,10 @@ public class MonitorUserProfileServiceImpl extends ServiceImpl<MonitorUserProfil
         profile.setUpdatedAt(now);
         profile.setCreatedBy(userId);
         profile.setUpdatedBy(userId);
-        
+
         // 保存到数据库
         save(profile);
-        
+
         return profile;
     }
 

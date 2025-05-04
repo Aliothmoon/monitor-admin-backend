@@ -9,8 +9,8 @@ import com.swust.aliothmoon.model.process.SuspiciousProcessAddDTO;
 import com.swust.aliothmoon.model.process.SuspiciousProcessQueryDTO;
 import com.swust.aliothmoon.model.process.SuspiciousProcessUpdateDTO;
 import com.swust.aliothmoon.model.process.SuspiciousProcessVO;
-import com.swust.aliothmoon.service.MonitorSuspiciousProcessService;
 import com.swust.aliothmoon.service.MonitorExamProcessService;
+import com.swust.aliothmoon.service.MonitorSuspiciousProcessService;
 import com.swust.aliothmoon.utils.TransferUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -147,7 +147,7 @@ public class SuspiciousProcessController {
         if (examProcessService.countByProcessId(id) > 0) {
             return R.failed("该进程已被考试引用，无法删除");
         }
-        
+
         boolean success = suspiciousProcessService.removeById(id);
         return success ? R.ok(true) : R.failed("删除失败");
     }

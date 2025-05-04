@@ -182,7 +182,7 @@ public class DomainBlacklistController {
         if (examDomainService.countByDomainId(id) > 0) {
             return R.failed("该域名已被考试引用，无法删除");
         }
-        
+
         boolean success = domainBlacklistService.removeById(id);
         return success ? R.ok(true) : R.failed("删除失败");
     }

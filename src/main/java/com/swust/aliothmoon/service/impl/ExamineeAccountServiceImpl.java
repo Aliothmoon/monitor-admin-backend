@@ -366,11 +366,11 @@ public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMappe
     @Override
     public List<ExamineeAccount> getByExamineeInfoIdAndExamId(Integer examineeInfoId, Integer examId) {
         ExamineeAccountTableDef examineeAccount = ExamineeAccountTableDef.EXAMINEE_ACCOUNT;
-        
+
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .where(examineeAccount.EXAMINEE_INFO_ID.eq(examineeInfoId))
                 .and(examineeAccount.EXAM_ID.eq(examId));
-                
+
         return list(queryWrapper);
     }
 } 

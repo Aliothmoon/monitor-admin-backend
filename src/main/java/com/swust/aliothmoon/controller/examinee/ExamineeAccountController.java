@@ -13,12 +13,10 @@ import com.swust.aliothmoon.model.vo.ExamineeInfoVO;
 import com.swust.aliothmoon.model.vo.ExamineeLoginVO;
 import com.swust.aliothmoon.service.ExamineeAccountService;
 import com.swust.aliothmoon.service.ExamineeInfoService;
-import com.swust.aliothmoon.utils.CryptoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -49,16 +47,16 @@ public class ExamineeAccountController {
         if (account == null || account.isEmpty() || password == null || password.isEmpty()) {
             return R.failed("账号或密码不能为空");
         }
-        
+
         // 调用服务处理登录逻辑
         ExamineeLoginVO loginVO = examineeAccountService.login(loginDTO);
         if (loginVO == null) {
             return R.failed("账号或密码错误，或账号已被禁用");
         }
-        
+
         return R.ok(loginVO);
     }
-    
+
     /**
      * 获取考生信息
      *
@@ -71,13 +69,13 @@ public class ExamineeAccountController {
         if (accountId == null) {
             return R.failed("未登录");
         }
-        
+
         // 调用服务获取考生信息
         ExamineeInfoVO infoVO = examineeAccountService.getExamineeInfo(accountId);
         if (infoVO == null) {
             return R.failed("账号不存在");
         }
-        
+
         return R.ok(infoVO);
     }
 
@@ -134,21 +132,22 @@ public class ExamineeAccountController {
     public R<Boolean> saveExamineeAccount(@RequestBody ExamineeAccount examineeAccount) {
         // 获取操作者ID
         Integer userId = UserInfoContext.get().getUserId();
-        
+
         // 如果提交的请求包含考生信息ID
         if (examineeAccount.getExamineeInfoId() != null) {
             // 查询考生信息
             ExamineeInfo examineeInfo = examineeInfoService.getById(examineeAccount.getExamineeInfoId());
             if (examineeInfo != null) {
-                // 检查姓名和学号是否重复
-                boolean isDuplicate = examineeInfoService.checkDuplicateNameAndStudentId(
-                        examineeInfo.getName(), examineeInfo.getStudentId());
-                if (isDuplicate) {
-                    return R.failed("考生姓名和学号已存在，请勿重复添加");
+                // 检查学号是否已存在
+                ExamineeInfo existingExaminee = examineeInfoService.checkDuplicateStudentId(examineeInfo.getStudentId());
+                if (existingExaminee != null && !existingExaminee.getExamineeInfoId().equals(examineeInfo.getExamineeInfoId())) {
+                    // 如果学号已存在且不是同一条记录，则进行处理
+                    // 可以选择合并记录或提示用户学号已被使用
+                    return R.failed("学号已存在，请检查考生信息");
                 }
             }
         }
-        
+
         // 调用服务创建考生账号
         boolean success = examineeAccountService.createExamineeAccount(examineeAccount, userId);
         return R.ok(success);
@@ -164,23 +163,22 @@ public class ExamineeAccountController {
     public R<Boolean> updateExamineeAccount(@RequestBody ExamineeAccount examineeAccount) {
         // 获取操作者ID
         Integer userId = UserInfoContext.get().getUserId();
-        
+
         // 如果提交的请求包含考生信息ID
         if (examineeAccount.getExamineeInfoId() != null) {
             // 查询考生信息
             ExamineeInfo examineeInfo = examineeInfoService.getById(examineeAccount.getExamineeInfoId());
             if (examineeInfo != null) {
-                // 检查姓名和学号是否重复（排除自身ID）
-                boolean isDuplicate = examineeInfoService.checkDuplicateNameAndStudentIdExcludeId(
-                        examineeInfo.getName(), 
+                // 检查学号是否重复（排除自身ID）
+                boolean isDuplicate = examineeInfoService.checkDuplicateStudentIdExcludeId(
                         examineeInfo.getStudentId(),
                         examineeInfo.getExamineeInfoId());
                 if (isDuplicate) {
-                    return R.failed("考生姓名和学号已存在，请勿重复添加");
+                    return R.failed("学号已存在，请勿使用重复学号");
                 }
             }
         }
-        
+
         // 调用服务更新考生账号
         boolean success = examineeAccountService.updateExamineeAccount(examineeAccount, userId);
         return R.ok(success);

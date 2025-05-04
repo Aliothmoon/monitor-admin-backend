@@ -8,7 +8,7 @@ import com.swust.aliothmoon.model.dto.PageInfo;
 /**
  * 操作日志服务接口
  *
- * @author 
+ * @author
  *
  */
 public interface OperationLogService extends IService<OperationLog> {
@@ -34,9 +34,9 @@ public interface OperationLogService extends IService<OperationLog> {
      * @param endTime 结束时间（可选）
      * @return 分页数据
      */
-    TableDataInfo<OperationLog> getPageData(int pageNum, int pageSize, String username, 
-                                          String operation, String path, String ip, 
-                                          String startTime, String endTime);
+    TableDataInfo<OperationLog> getPageData(int pageNum, int pageSize, String username,
+                                            String operation, String path, String ip,
+                                            String startTime, String endTime);
 
     /**
      * 记录操作日志

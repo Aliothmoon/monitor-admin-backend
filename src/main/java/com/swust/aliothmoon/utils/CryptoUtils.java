@@ -8,7 +8,7 @@ public class CryptoUtils {
     public String hashPassword(String pwd) {
         return DigestUtil.md5Hex(pwd);
     }
-    
+
     /**
      * 验证密码是否正确
      * @param plainPassword 明文密码

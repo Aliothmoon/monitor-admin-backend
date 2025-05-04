@@ -20,7 +20,7 @@ public interface MonitorExamRiskImageService extends IService<MonitorExamRiskIma
      * @return 风险图片模板关联列表
      */
     List<MonitorExamRiskImage> listByExamId(Integer examId);
-    
+
     /**
      * 根据考试ID删除关联关系
      *
@@ -28,7 +28,7 @@ public interface MonitorExamRiskImageService extends IService<MonitorExamRiskIma
      * @return 是否成功
      */
     boolean removeByExamId(Integer examId);
-    
+
     /**
      * 根据风险图片模板ID查询关联的考试数量
      *
