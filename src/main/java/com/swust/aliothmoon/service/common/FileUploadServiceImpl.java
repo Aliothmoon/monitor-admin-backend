@@ -1,5 +1,6 @@
 package com.swust.aliothmoon.service.common;
 
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.swust.aliothmoon.service.common.iface.FileUploadService;
 import lombok.SneakyThrows;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 
@@ -31,7 +33,11 @@ public class FileUploadServiceImpl implements FileUploadService, InitializingBea
         if (!parent.exists()) {
             parent.mkdirs();
         }
-        file.transferTo(target);
+        try (InputStream ins = file.getInputStream()) {
+            try (FileOutputStream fos = new FileOutputStream(target)) {
+                IoUtil.copy(ins, fos);
+            }
+        }
         return true;
     }
 
