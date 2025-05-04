@@ -1,5 +1,6 @@
 package com.swust.aliothmoon.service;
 
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.service.IService;
 import com.swust.aliothmoon.define.TableDataInfo;
 import com.swust.aliothmoon.entity.ExamineeAccount;
@@ -120,4 +121,28 @@ public interface ExamineeAccountService extends IService<ExamineeAccount> {
      * @return 账号列表
      */
     List<ExamineeAccount> getByExamId(Integer examId);
+
+    /**
+     * 获取考试的考生账号与考生信息关联的综合数据分页列表
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @param account 账号（可选）
+     * @param examId 考试ID
+     * @param name 考生姓名（可选）
+     * @param studentId 学号（可选）
+     * @param college 学院（可选）
+     * @param className 班级（可选）
+     * @return 考生账号与考生信息的综合数据分页信息
+     */
+    Page<ExamineeAccountWithInfoVO> getAllAccountsWithInfoByExamId(int pageNum, int pageSize, String account, Integer examId, String name, String studentId, String college, String className);
+
+    /**
+     * 根据考生信息ID和考试ID获取考生账号
+     *
+     * @param examineeInfoId 考生信息ID
+     * @param examId 考试ID
+     * @return 账号列表
+     */
+    List<ExamineeAccount> getByExamineeInfoIdAndExamId(Integer examineeInfoId, Integer examId);
 } 

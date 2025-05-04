@@ -21,6 +21,8 @@ import com.swust.aliothmoon.service.ExamineeInfoService;
 import com.swust.aliothmoon.utils.CryptoUtils;
 import com.swust.aliothmoon.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -40,7 +42,9 @@ import static com.swust.aliothmoon.constant.Keys.CANDIDATE_TOKEN;
 public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMapper, ExamineeAccount> implements ExamineeAccountService {
 
     private final ExamineeAccountMapper examineeAccountMapper;
-    private final ExamineeInfoService examineeInfoService;
+    @Lazy
+    @Autowired
+    private ExamineeInfoService examineeInfoService;
 
     @Override
     public ExamineeAccount validateLogin(String account, String password) {
@@ -298,5 +302,75 @@ public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMappe
         Page<ExamineeAccountWithInfoVO> result = this.pageAs(page, queryWrapper, ExamineeAccountWithInfoVO.class);
 
         return TableDataInfo.of(result);
+    }
+
+    @Override
+    public Page<ExamineeAccountWithInfoVO> getAllAccountsWithInfoByExamId(int pageNum, int pageSize, String account, Integer examId, String name, String studentId, String college, String className) {
+        ExamineeAccountTableDef examineeAccount = ExamineeAccountTableDef.EXAMINEE_ACCOUNT;
+        ExamineeInfoTableDef examineeInfo = ExamineeInfoTableDef.EXAMINEE_INFO;
+
+        // 构建查询条件
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .select(
+                        examineeAccount.ACCOUNT_ID, // 映射为id，方便前端展示
+                        examineeAccount.EXAMINEE_INFO_ID,
+                        examineeAccount.EXAM_ID,
+                        examineeAccount.ACCOUNT,
+                        examineeAccount.STATUS,
+                        examineeAccount.LAST_LOGIN_TIME,
+                        examineeAccount.CREATED_AT,
+                        examineeInfo.STUDENT_ID,
+                        examineeInfo.NAME,
+                        examineeInfo.GENDER,
+                        examineeInfo.COLLEGE,
+                        examineeInfo.CLASS_NAME,
+                        examineeInfo.MAJOR,
+                        examineeInfo.EMAIL,
+                        examineeInfo.PHONE
+                )
+                .from(examineeAccount)
+                .leftJoin(examineeInfo).on(examineeAccount.EXAMINEE_INFO_ID.eq(examineeInfo.EXAMINEE_INFO_ID));
+
+        // 添加考试ID查询条件（必需）
+        queryWrapper.and(examineeAccount.EXAM_ID.eq(examId));
+
+        // 添加其他查询条件（可选）
+        if (StringUtils.hasText(account)) {
+            queryWrapper.and(examineeAccount.ACCOUNT.like(account));
+        }
+
+        if (StringUtils.hasText(name)) {
+            queryWrapper.and(examineeInfo.NAME.like(name));
+        }
+
+        if (StringUtils.hasText(studentId)) {
+            queryWrapper.and(examineeInfo.STUDENT_ID.like(studentId));
+        }
+
+        if (StringUtils.hasText(college)) {
+            queryWrapper.and(examineeInfo.COLLEGE.like(college));
+        }
+
+        if (StringUtils.hasText(className)) {
+            queryWrapper.and(examineeInfo.CLASS_NAME.like(className));
+        }
+
+        // 按创建时间排序
+        queryWrapper.orderBy(examineeAccount.CREATED_AT.desc());
+
+        // 执行分页查询
+        Page<ExamineeAccountWithInfoVO> page = new Page<>(pageNum, pageSize);
+        return this.pageAs(page, queryWrapper, ExamineeAccountWithInfoVO.class);
+    }
+
+    @Override
+    public List<ExamineeAccount> getByExamineeInfoIdAndExamId(Integer examineeInfoId, Integer examId) {
+        ExamineeAccountTableDef examineeAccount = ExamineeAccountTableDef.EXAMINEE_ACCOUNT;
+        
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .where(examineeAccount.EXAMINEE_INFO_ID.eq(examineeInfoId))
+                .and(examineeAccount.EXAM_ID.eq(examId));
+                
+        return list(queryWrapper);
     }
 } 

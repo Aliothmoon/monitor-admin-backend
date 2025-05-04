@@ -135,6 +135,20 @@ public class ExamineeAccountController {
         // 获取操作者ID
         Integer userId = UserInfoContext.get().getUserId();
         
+        // 如果提交的请求包含考生信息ID
+        if (examineeAccount.getExamineeInfoId() != null) {
+            // 查询考生信息
+            ExamineeInfo examineeInfo = examineeInfoService.getById(examineeAccount.getExamineeInfoId());
+            if (examineeInfo != null) {
+                // 检查姓名和学号是否重复
+                boolean isDuplicate = examineeInfoService.checkDuplicateNameAndStudentId(
+                        examineeInfo.getName(), examineeInfo.getStudentId());
+                if (isDuplicate) {
+                    return R.failed("考生姓名和学号已存在，请勿重复添加");
+                }
+            }
+        }
+        
         // 调用服务创建考生账号
         boolean success = examineeAccountService.createExamineeAccount(examineeAccount, userId);
         return R.ok(success);
@@ -150,6 +164,22 @@ public class ExamineeAccountController {
     public R<Boolean> updateExamineeAccount(@RequestBody ExamineeAccount examineeAccount) {
         // 获取操作者ID
         Integer userId = UserInfoContext.get().getUserId();
+        
+        // 如果提交的请求包含考生信息ID
+        if (examineeAccount.getExamineeInfoId() != null) {
+            // 查询考生信息
+            ExamineeInfo examineeInfo = examineeInfoService.getById(examineeAccount.getExamineeInfoId());
+            if (examineeInfo != null) {
+                // 检查姓名和学号是否重复（排除自身ID）
+                boolean isDuplicate = examineeInfoService.checkDuplicateNameAndStudentIdExcludeId(
+                        examineeInfo.getName(), 
+                        examineeInfo.getStudentId(),
+                        examineeInfo.getExamineeInfoId());
+                if (isDuplicate) {
+                    return R.failed("考生姓名和学号已存在，请勿重复添加");
+                }
+            }
+        }
         
         // 调用服务更新考生账号
         boolean success = examineeAccountService.updateExamineeAccount(examineeAccount, userId);

@@ -79,6 +79,16 @@ public class ExamineeInfoController {
     @PostMapping("/saveExamineeInfo")
     @Transactional
     public R<Boolean> saveExamineeInfo(@RequestBody ExamineeInfo examineeInfo) {
+        // 检查姓名和学号是否重复
+        String name = examineeInfo.getName();
+        String studentId = examineeInfo.getStudentId();
+        if (name != null && studentId != null) {
+            boolean isDuplicate = examineeInfoService.checkDuplicateNameAndStudentId(name, studentId);
+            if (isDuplicate) {
+                return R.failed("考生姓名和学号已存在，请勿重复添加");
+            }
+        }
+
         // 设置创建和更新时间
         LocalDateTime now = LocalDateTime.now();
         examineeInfo.setCreatedAt(now);
@@ -87,7 +97,7 @@ public class ExamineeInfoController {
         Integer userId = UserInfoContext.get().getUserId();
         examineeInfo.setCreatedBy(userId);
         examineeInfo.setUpdatedBy(userId);
-        
+
         boolean success = examineeInfoService.save(examineeInfo);
         return R.ok(success);
     }
@@ -100,10 +110,22 @@ public class ExamineeInfoController {
      */
     @PutMapping("/updateExamineeInfo")
     public R<Boolean> updateExamineeInfo(@RequestBody ExamineeInfo examineeInfo) {
+        // 检查姓名和学号是否重复(排除自身)
+        String name = examineeInfo.getName();
+        String studentId = examineeInfo.getStudentId();
+        Integer examineeInfoId = examineeInfo.getExamineeInfoId();
+        if (name != null && studentId != null && examineeInfoId != null) {
+            boolean isDuplicate = examineeInfoService.checkDuplicateNameAndStudentIdExcludeId(
+                    name, studentId, examineeInfoId);
+            if (isDuplicate) {
+                return R.failed("考生姓名和学号已存在，请勿重复添加");
+            }
+        }
+
         // 设置更新时间和更新者
         examineeInfo.setUpdatedAt(LocalDateTime.now());
         examineeInfo.setUpdatedBy(UserInfoContext.get().getUserId());
-        
+
         boolean success = examineeInfoService.updateById(examineeInfo);
         return R.ok(success);
     }

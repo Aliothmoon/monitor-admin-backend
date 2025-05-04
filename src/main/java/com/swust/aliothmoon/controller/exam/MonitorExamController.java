@@ -4,6 +4,8 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.swust.aliothmoon.context.UserInfoContext;
 import com.swust.aliothmoon.define.R;
+import com.swust.aliothmoon.entity.ExamineeAccount;
+import com.swust.aliothmoon.entity.ExamineeInfo;
 import com.swust.aliothmoon.entity.MonitorExam;
 import com.swust.aliothmoon.entity.MonitorExamDomain;
 import com.swust.aliothmoon.entity.MonitorExamProcess;
@@ -12,6 +14,9 @@ import com.swust.aliothmoon.model.exam.ExamCreateDTO;
 import com.swust.aliothmoon.model.exam.ExamQueryDTO;
 import com.swust.aliothmoon.model.exam.ExamUpdateDTO;
 import com.swust.aliothmoon.model.exam.ExamVO;
+import com.swust.aliothmoon.model.vo.ExamineeAccountWithInfoVO;
+import com.swust.aliothmoon.service.ExamineeAccountService;
+import com.swust.aliothmoon.service.ExamineeInfoService;
 import com.swust.aliothmoon.service.MonitorExamDomainService;
 import com.swust.aliothmoon.service.MonitorExamProcessService;
 import com.swust.aliothmoon.service.MonitorExamRiskImageService;
@@ -20,10 +25,14 @@ import com.swust.aliothmoon.utils.TransferUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.swust.aliothmoon.entity.table.MonitorExamTableDef.MONITOR_EXAM;
@@ -43,6 +52,8 @@ public class MonitorExamController {
     private final MonitorExamProcessService examProcessService;
     private final MonitorExamDomainService examDomainService;
     private final MonitorExamRiskImageService examRiskImageService;
+    private final ExamineeInfoService examineeInfoService;
+    private final ExamineeAccountService examineeAccountService;
 
     /**
      * 分页查询考试列表
@@ -371,5 +382,302 @@ public class MonitorExamController {
 
         boolean success = examService.removeById(id);
         return success ? R.ok(true) : R.failed("删除失败");
+    }
+
+    /**
+     * 获取考试考生列表
+     *
+     * @param examId 考试ID
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @param studentId 学号（可选）
+     * @param name 姓名（可选）
+     * @param college 学院（可选）
+     * @return 考生列表分页数据
+     */
+    @GetMapping("/examinees")
+    public R<Page<ExamineeAccountWithInfoVO>> getExamExaminees(
+            @RequestParam Integer examId,
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String studentId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String college) {
+        
+        // 检查考试是否存在
+        MonitorExam exam = examService.getById(examId);
+        if (exam == null) {
+            return R.failed("考试不存在");
+        }
+        
+        // 获取考试的考生账号列表
+        Page<ExamineeAccountWithInfoVO> page = examineeAccountService.getAllAccountsWithInfoByExamId(
+                pageNum, pageSize, null, examId, name, studentId, college, null);
+        
+        return R.ok(page);
+    }
+
+    /**
+     * 添加考生到考试
+     *
+     * @param requestMap 包含examId和examineeInfoId的请求体
+     * @return 操作结果
+     */
+    @PostMapping("/examinees/add")
+    @Transactional
+    public R<Boolean> addExamineeToExam(@RequestBody Map<String, Integer> requestMap) {
+        Integer examId = requestMap.get("examId");
+        Integer examineeInfoId = requestMap.get("examineeInfoId");
+        
+        if (examId == null || examineeInfoId == null) {
+            return R.failed("考试ID和考生信息ID不能为空");
+        }
+        
+        // 检查考试是否存在
+        MonitorExam exam = examService.getById(examId);
+        if (exam == null) {
+            return R.failed("考试不存在");
+        }
+        
+        // 检查考生信息是否存在
+        ExamineeInfo examineeInfo = examineeInfoService.getById(examineeInfoId);
+        if (examineeInfo == null) {
+            return R.failed("考生信息不存在");
+        }
+        
+        // 检查是否已经有账号
+        List<ExamineeAccount> existingAccounts = examineeAccountService.getByExamineeInfoIdAndExamId(examineeInfoId, examId);
+        if (!existingAccounts.isEmpty()) {
+            return R.failed("该考生已经在此考试中注册");
+        }
+        
+        // 创建考生账号
+        String account = generateAccountFromStudentId(examineeInfo.getStudentId());
+        String password = generateRandomPassword(6); // 生成6位随机密码
+        
+        ExamineeAccount examineeAccount = new ExamineeAccount();
+        examineeAccount.setExamineeInfoId(examineeInfoId);
+        examineeAccount.setExamId(examId);
+        examineeAccount.setAccount(account);
+        examineeAccount.setPassword(password);
+        examineeAccount.setStatus(0); // 未登录状态
+        examineeAccount.setCreatedAt(LocalDateTime.now());
+        examineeAccount.setUpdatedAt(LocalDateTime.now());
+        examineeAccount.setCreatedBy(UserInfoContext.get().getUserId());
+        examineeAccount.setUpdatedBy(UserInfoContext.get().getUserId());
+        
+        boolean success = examineeAccountService.save(examineeAccount);
+        return R.ok(success);
+    }
+
+    /**
+     * 从考试中移除考生
+     *
+     * @param examId 考试ID
+     * @param accountId 考生账号ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/examinees/remove/{examId}/{accountId}")
+    @Transactional
+    public R<Boolean> removeExamineeFromExam(@PathVariable Integer examId, @PathVariable Integer accountId) {
+        // 检查考试是否存在
+        MonitorExam exam = examService.getById(examId);
+        if (exam == null) {
+            return R.failed("考试不存在");
+        }
+        
+        // 检查账号是否存在
+        ExamineeAccount account = examineeAccountService.getById(accountId);
+        if (account == null) {
+            return R.failed("考生账号不存在");
+        }
+        
+        // 检查账号是否属于该考试
+        if (!account.getExamId().equals(examId)) {
+            return R.failed("该账号不属于该考试");
+        }
+        
+        // 删除考生账号
+        boolean success = examineeAccountService.removeById(accountId);
+        return R.ok(success);
+    }
+
+    /**
+     * 更新考生账号信息
+     *
+     * @param requestMap 包含账号信息的请求体
+     * @return 操作结果
+     */
+    @PutMapping("/examinees/account")
+    @Transactional
+    public R<Boolean> updateExamExamineeAccount(@RequestBody Map<String, Object> requestMap) {
+        // 根据请求参数确定更新类型
+        if (requestMap.containsKey("id")) {
+            // 更新现有账号
+            Integer accountId = (Integer) requestMap.get("id");
+            String account = (String) requestMap.get("account");
+            String password = (String) requestMap.get("password");
+            
+            ExamineeAccount examineeAccount = examineeAccountService.getById(accountId);
+            if (examineeAccount == null) {
+                return R.failed("考生账号不存在");
+            }
+            
+            if (account != null && !account.isEmpty()) {
+                examineeAccount.setAccount(account);
+            }
+            
+            if (password != null && !password.isEmpty()) {
+                examineeAccount.setPassword(password);
+            }
+            
+            examineeAccount.setUpdatedAt(LocalDateTime.now());
+            examineeAccount.setUpdatedBy(UserInfoContext.get().getUserId());
+            
+            boolean success = examineeAccountService.updateById(examineeAccount);
+            return R.ok(success);
+            
+        } else if (requestMap.containsKey("examineeInfoId") && requestMap.containsKey("examId")) {
+            // 为考生创建新账号
+            Integer examineeInfoId = (Integer) requestMap.get("examineeInfoId");
+            Integer examId = (Integer) requestMap.get("examId");
+            String account = (String) requestMap.get("account");
+            String password = (String) requestMap.get("password");
+            
+            // 检查考试是否存在
+            MonitorExam exam = examService.getById(examId);
+            if (exam == null) {
+                return R.failed("考试不存在");
+            }
+            
+            // 检查考生信息是否存在
+            ExamineeInfo examineeInfo = examineeInfoService.getById(examineeInfoId);
+            if (examineeInfo == null) {
+                return R.failed("考生信息不存在");
+            }
+            
+            // 检查是否已经有账号
+            List<ExamineeAccount> existingAccounts = examineeAccountService.getByExamineeInfoIdAndExamId(examineeInfoId, examId);
+            if (!existingAccounts.isEmpty()) {
+                // 更新现有账号
+                ExamineeAccount existingAccount = existingAccounts.get(0);
+                if (account != null && !account.isEmpty()) {
+                    existingAccount.setAccount(account);
+                }
+                
+                if (password != null && !password.isEmpty()) {
+                    existingAccount.setPassword(password);
+                }
+                
+                existingAccount.setUpdatedAt(LocalDateTime.now());
+                existingAccount.setUpdatedBy(UserInfoContext.get().getUserId());
+                
+                boolean success = examineeAccountService.updateById(existingAccount);
+                return R.ok(success);
+            } else {
+                // 创建新账号
+                ExamineeAccount examineeAccount = new ExamineeAccount();
+                examineeAccount.setExamineeInfoId(examineeInfoId);
+                examineeAccount.setExamId(examId);
+                examineeAccount.setAccount(account);
+                examineeAccount.setPassword(password);
+                examineeAccount.setStatus(0); // 未登录状态
+                examineeAccount.setCreatedAt(LocalDateTime.now());
+                examineeAccount.setUpdatedAt(LocalDateTime.now());
+                examineeAccount.setCreatedBy(UserInfoContext.get().getUserId());
+                examineeAccount.setUpdatedBy(UserInfoContext.get().getUserId());
+                
+                boolean success = examineeAccountService.save(examineeAccount);
+                return R.ok(success);
+            }
+        }
+        
+        return R.failed("请求参数不正确");
+    }
+    
+    /**
+     * 手动导入考生信息
+     *
+     * @param file 考生信息Excel文件
+     * @param examId 考试ID
+     * @return 导入结果
+     */
+    @PostMapping("/examinees/manual-import")
+    @Transactional
+    public R<Map<String, Object>> manualImportExaminees(@RequestParam("file") MultipartFile file, @RequestParam("examId") Integer examId) {
+        if (file.isEmpty()) {
+            return R.failed("上传文件为空");
+        }
+        
+        // 检查考试是否存在
+        MonitorExam exam = examService.getById(examId);
+        if (exam == null) {
+            return R.failed("考试不存在");
+        }
+        
+        try {
+            // 解析Excel文件并导入考生
+            List<Map<String, Object>> importResult = examineeInfoService.importExamineesFromExcel(file, examId);
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("total", importResult.size());
+            result.put("details", importResult);
+            
+            return R.ok(result);
+        } catch (IOException e) {
+            return R.failed("文件解析失败: " + e.getMessage());
+        } catch (Exception e) {
+            return R.failed("导入失败: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 下载考生导入模板
+     *
+     * @return 模板文件
+     */
+    @GetMapping("/examinees/template")
+    public void downloadExamineeTemplate() {
+        // 实际实现应该是直接返回一个文件流
+        // 这里留空，在服务层实现
+        examineeInfoService.generateAndDownloadTemplate();
+    }
+    
+    /**
+     * 导出考试考生名单
+     *
+     * @param examId 考试ID
+     */
+    @GetMapping("/examinees/export/{examId}")
+    public void exportExaminees(@PathVariable Integer examId) {
+        // 验证考试是否存在
+        MonitorExam exam = examService.getById(examId);
+        if (exam == null) {
+            throw new RuntimeException("考试不存在");
+        }
+        
+        // 导出考生名单
+        examineeInfoService.exportExamineesInfo(examId, exam.getName(), exam.getLocation());
+    }
+    
+    /**
+     * 从学号生成默认账号
+     */
+    private String generateAccountFromStudentId(String studentId) {
+        // 简单实现：使用学号作为账号
+        return studentId;
+    }
+    
+    /**
+     * 生成随机密码
+     */
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int index = (int) (Math.random() * chars.length());
+            sb.append(chars.charAt(index));
+        }
+        return sb.toString();
     }
 } 
