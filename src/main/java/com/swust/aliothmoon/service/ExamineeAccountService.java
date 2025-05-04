@@ -20,6 +20,8 @@ import java.util.List;
  */
 public interface ExamineeAccountService extends IService<ExamineeAccount> {
 
+
+    String generateAccountByStudentId(Integer examId, String studentId);
     /**
      * 验证考生登录
      *

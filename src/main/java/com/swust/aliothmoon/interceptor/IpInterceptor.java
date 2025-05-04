@@ -85,7 +85,6 @@ public class IpInterceptor implements MatchedHandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String ip = getClientIpAddress(request);
         request.setAttribute("clientIp", ip);
-        log.info("Set IP");
         return true;
     }
 

@@ -47,6 +47,11 @@ public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMappe
     private ExamineeInfoService examineeInfoService;
 
     @Override
+    public String generateAccountByStudentId(Integer examId, String studentId) {
+        return Integer.toOctalString(examId) + studentId;
+    }
+
+    @Override
     public ExamineeAccount validateLogin(String account, String password) {
         if (!StringUtils.hasText(account) || !StringUtils.hasText(password)) {
             return null;
@@ -334,26 +339,29 @@ public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMappe
         // 添加考试ID查询条件（必需）
         queryWrapper.and(examineeAccount.EXAM_ID.eq(examId));
 
-        // 添加其他查询条件（可选）
-        if (StringUtils.hasText(account)) {
-            queryWrapper.and(examineeAccount.ACCOUNT.like(account));
-        }
+        queryWrapper.and(wrapper -> {
+            // 添加其他查询条件（可选）
+            if (StringUtils.hasText(account)) {
+                wrapper.or(examineeAccount.ACCOUNT.like(account));
+            }
 
-        if (StringUtils.hasText(name)) {
-            queryWrapper.and(examineeInfo.NAME.like(name));
-        }
+            if (StringUtils.hasText(name)) {
+                wrapper.or(examineeInfo.NAME.like(name));
+            }
 
-        if (StringUtils.hasText(studentId)) {
-            queryWrapper.and(examineeInfo.STUDENT_ID.like(studentId));
-        }
+            if (StringUtils.hasText(studentId)) {
+                wrapper.or(examineeInfo.STUDENT_ID.like(studentId));
+            }
 
-        if (StringUtils.hasText(college)) {
-            queryWrapper.and(examineeInfo.COLLEGE.like(college));
-        }
+            if (StringUtils.hasText(college)) {
+                wrapper.or(examineeInfo.COLLEGE.like(college));
+            }
 
-        if (StringUtils.hasText(className)) {
-            queryWrapper.and(examineeInfo.CLASS_NAME.like(className));
-        }
+            if (StringUtils.hasText(className)) {
+                wrapper.or(examineeInfo.CLASS_NAME.like(className));
+            }
+        }, true);
+
 
         // 按创建时间排序
         queryWrapper.orderBy(examineeAccount.CREATED_AT.desc());

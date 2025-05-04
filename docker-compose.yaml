@@ -1,0 +1,18 @@
+services:
+  monibuca:
+    container_name: "m7s"
+    image: 'langhuihui/monibuca:latest'
+    volumes:
+      - "/root/m7s/record:/monibuca/record"
+      - "/root/m7s/logs:/monibuca/logs"
+      - "/root/m7s/config.yaml:/monibuca/config.yaml"
+    ports:
+      - '9000:9000'
+      - '8000:8000/udp'
+      - '5060:5060/udp'
+      - '58200:58200'
+      - '554:554'
+      - '8443:8443'
+      - '8880:8080'
+      - '1935:1935'
+    stdin_open: true

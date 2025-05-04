@@ -177,6 +177,17 @@ public class MonitorExamController {
     }
 
     /**
+     * 根据ID查询考试详情 (用于监控页面)
+     *
+     * @param id 考试ID
+     * @return 考试信息
+     */
+    @GetMapping("/detail/{id}")
+    public R<ExamVO> getExamDetail(@PathVariable Integer id) {
+        return getById(id);
+    }
+
+    /**
      * 创建考试
      *
      * @param createDTO 创建信息
@@ -455,9 +466,10 @@ public class MonitorExamController {
         }
 
         // 创建考生账号
-        String account = generateAccountFromStudentId(examineeInfo.getStudentId());
-        String password = generateRandomPassword(8); // 生成6位随机密码
 
+        String account = examineeAccountService.generateAccountByStudentId(examId, examineeInfo.getStudentId());
+
+        String password = generateRandomPassword(8); // 生成6位随机密码
         ExamineeAccount examineeAccount = new ExamineeAccount();
         examineeAccount.setExamineeInfoId(examineeInfoId);
         examineeAccount.setExamId(examId);

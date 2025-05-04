@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS `monitor_website_visit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `exam_id` int(11) NOT NULL COMMENT '考试ID',
+  `examinee_account_id` int(11) NOT NULL COMMENT '考生账号ID',
+  `student_id` int(11) DEFAULT NULL COMMENT '学生ID',
+  `url` varchar(500) NOT NULL COMMENT '访问URL',
+  `title` varchar(255) DEFAULT NULL COMMENT '网站标题',
+  `visit_time` datetime NOT NULL COMMENT '访问时间',
+  `duration` int(11) DEFAULT NULL COMMENT '停留时长(秒)',
+  `risk_level` int(11) NOT NULL DEFAULT '0' COMMENT '风险等级 0-低风险 1-中风险 2-高风险',
+  `description` varchar(500) DEFAULT NULL COMMENT '描述信息',
+  `is_blacklist` tinyint(1) DEFAULT '0' COMMENT '是否黑名单网站 0-否 1-是',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_exam_id` (`exam_id`),
+  KEY `idx_examinee_account_id` (`examinee_account_id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_visit_time` (`visit_time`),
+  KEY `idx_risk_level` (`risk_level`),
+  KEY `idx_is_blacklist` (`is_blacklist`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='考生网站访问记录表'; 

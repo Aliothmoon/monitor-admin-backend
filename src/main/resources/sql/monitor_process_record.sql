@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS `monitor_process_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `exam_id` int(11) NOT NULL COMMENT '考试ID',
+  `examinee_account_id` int(11) NOT NULL COMMENT '考生账号ID',
+  `student_id` int(11) DEFAULT NULL COMMENT '学生ID',
+  `process_name` varchar(255) NOT NULL COMMENT '进程名称',
+  `process_path` varchar(500) DEFAULT NULL COMMENT '进程路径',
+  `start_time` datetime NOT NULL COMMENT '启动时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `risk_level` int(11) NOT NULL DEFAULT '0' COMMENT '风险等级 0-低风险 1-中风险 2-高风险',
+  `description` varchar(500) DEFAULT NULL COMMENT '描述信息',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_exam_id` (`exam_id`),
+  KEY `idx_examinee_account_id` (`examinee_account_id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_start_time` (`start_time`),
+  KEY `idx_risk_level` (`risk_level`),
+  KEY `idx_process_name` (`process_name`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='考生进程记录表'; 

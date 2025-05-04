@@ -238,7 +238,10 @@ public class ExamineeInfoServiceImpl extends ServiceImpl<ExamineeInfoMapper, Exa
                         ExamineeAccount account = new ExamineeAccount();
                         account.setExamineeInfoId(examineeInfo.getExamineeInfoId());
                         account.setExamId(examId);
-                        account.setAccount(studentId); // 使用学号作为默认账号
+
+                        String acc = examineeAccountService.generateAccountByStudentId(examId, studentId);
+
+                        account.setAccount(acc); // 使用学号作为默认账号
                         account.setPassword(generateRandomPassword(8)); // 生成6位随机密码
                         account.setStatus(1); // 未登录状态
                         account.setCreatedAt(LocalDateTime.now());
@@ -275,6 +278,8 @@ public class ExamineeInfoServiceImpl extends ServiceImpl<ExamineeInfoMapper, Exa
 
         return resultList;
     }
+
+
 
     @Override
     public void generateAndDownloadTemplate() {

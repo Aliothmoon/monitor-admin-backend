@@ -8,6 +8,9 @@ spring:
   data:
     redis:
       database: 0
+  threads:
+    virtual:
+      enabled: true
 #      username:
 #      password:
 

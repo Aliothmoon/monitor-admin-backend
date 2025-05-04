@@ -24,7 +24,7 @@ import static com.swust.aliothmoon.entity.table.MonitorScreenshotTableDef.MONITO
  * @author Aliothmoon
  *
  */
-@RestController
+@RestController("fileController")
 @RequestMapping("/file/screenshot")
 @RequiredArgsConstructor
 public class ScreenshotController {

@@ -61,6 +61,6 @@ public class AuthorizedInterceptor implements MatchedHandlerInterceptor {
 
     @Override
     public List<String> excludes() {
-        return List.of("/user/login", "/user/logout");
+        return List.of("/user/login", "/user/logout", "/ws/monitor/**");
     }
 }
