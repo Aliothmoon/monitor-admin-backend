@@ -5,19 +5,31 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.swust.aliothmoon.context.UserInfoContext;
 import com.swust.aliothmoon.define.R;
 import com.swust.aliothmoon.entity.MonitorExam;
+import com.swust.aliothmoon.entity.MonitorExamDomain;
+import com.swust.aliothmoon.entity.MonitorExamProcess;
+import com.swust.aliothmoon.entity.MonitorExamRiskImage;
 import com.swust.aliothmoon.model.exam.ExamCreateDTO;
 import com.swust.aliothmoon.model.exam.ExamQueryDTO;
 import com.swust.aliothmoon.model.exam.ExamUpdateDTO;
 import com.swust.aliothmoon.model.exam.ExamVO;
+import com.swust.aliothmoon.service.MonitorExamDomainService;
+import com.swust.aliothmoon.service.MonitorExamProcessService;
+import com.swust.aliothmoon.service.MonitorExamRiskImageService;
 import com.swust.aliothmoon.service.MonitorExamService;
 import com.swust.aliothmoon.utils.TransferUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.swust.aliothmoon.entity.table.MonitorExamTableDef.MONITOR_EXAM;
+import static com.swust.aliothmoon.entity.table.MonitorExamProcessTableDef.MONITOR_EXAM_PROCESS;
+import static com.swust.aliothmoon.entity.table.MonitorExamDomainTableDef.MONITOR_EXAM_DOMAIN;
+import static com.swust.aliothmoon.entity.table.MonitorExamRiskImageTableDef.MONITOR_EXAM_RISK_IMAGE;
 
 /**
  * 考试管理控制器
@@ -31,6 +43,9 @@ import static com.swust.aliothmoon.entity.table.MonitorExamTableDef.MONITOR_EXAM
 public class MonitorExamController {
 
     private final MonitorExamService examService;
+    private final MonitorExamProcessService examProcessService;
+    private final MonitorExamDomainService examDomainService;
+    private final MonitorExamRiskImageService examRiskImageService;
 
     /**
      * 分页查询考试列表
@@ -77,6 +92,34 @@ public class MonitorExamController {
         result.setTotalPage(page.getTotalPage());
 
         List<ExamVO> records = TransferUtils.toList(page.getRecords(), ExamVO.class);
+        
+        // 遍历每个考试，获取关联数据
+        for (ExamVO exam : records) {
+            // 设置可疑进程ID列表
+            List<MonitorExamProcess> processList = examProcessService.listByExamId(exam.getId());
+            if (processList != null && !processList.isEmpty()) {
+                exam.setSuspiciousProcessIds(processList.stream()
+                        .map(MonitorExamProcess::getProcessId)
+                        .collect(Collectors.toList()));
+            }
+            
+            // 设置域名黑名单ID列表
+            List<MonitorExamDomain> domainList = examDomainService.listByExamId(exam.getId());
+            if (domainList != null && !domainList.isEmpty()) {
+                exam.setBlacklistDomainIds(domainList.stream()
+                        .map(MonitorExamDomain::getDomainId)
+                        .collect(Collectors.toList()));
+            }
+            
+            // 设置风险图片模板ID列表
+            List<MonitorExamRiskImage> riskImageList = examRiskImageService.listByExamId(exam.getId());
+            if (riskImageList != null && !riskImageList.isEmpty()) {
+                exam.setRiskImageIds(riskImageList.stream()
+                        .map(MonitorExamRiskImage::getRiskImageId)
+                        .collect(Collectors.toList()));
+            }
+        }
+        
         result.setRecords(records);
 
         return R.ok(result);
@@ -95,6 +138,31 @@ public class MonitorExamController {
             return R.failed("考试不存在");
         }
         ExamVO vo = TransferUtils.to(exam, ExamVO.class);
+        
+        // 设置可疑进程ID列表
+        List<MonitorExamProcess> processList = examProcessService.listByExamId(id);
+        if (processList != null && !processList.isEmpty()) {
+            vo.setSuspiciousProcessIds(processList.stream()
+                    .map(MonitorExamProcess::getProcessId)
+                    .collect(Collectors.toList()));
+        }
+        
+        // 设置域名黑名单ID列表
+        List<MonitorExamDomain> domainList = examDomainService.listByExamId(id);
+        if (domainList != null && !domainList.isEmpty()) {
+            vo.setBlacklistDomainIds(domainList.stream()
+                    .map(MonitorExamDomain::getDomainId)
+                    .collect(Collectors.toList()));
+        }
+        
+        // 设置风险图片模板ID列表
+        List<MonitorExamRiskImage> riskImageList = examRiskImageService.listByExamId(id);
+        if (riskImageList != null && !riskImageList.isEmpty()) {
+            vo.setRiskImageIds(riskImageList.stream()
+                    .map(MonitorExamRiskImage::getRiskImageId)
+                    .collect(Collectors.toList()));
+        }
+        
         return R.ok(vo);
     }
 
@@ -105,6 +173,7 @@ public class MonitorExamController {
      * @return 创建结果
      */
     @PostMapping
+    @Transactional
     public R<Boolean> create(@RequestBody ExamCreateDTO createDTO) {
         // 验证开始时间必须早于结束时间
         if (createDTO.getStartTime().isAfter(createDTO.getEndTime())) {
@@ -135,7 +204,50 @@ public class MonitorExamController {
         exam.setUpdatedBy(UserInfoContext.get().getUserId());
 
         boolean success = examService.save(exam);
-        return success ? R.ok(true) : R.failed("创建失败");
+        if (!success) {
+            return R.failed("创建失败");
+        }
+        
+        // 保存可疑进程关联
+        if (createDTO.getSuspiciousProcessIds() != null && !createDTO.getSuspiciousProcessIds().isEmpty()) {
+            List<MonitorExamProcess> processList = new ArrayList<>();
+            for (Integer processId : createDTO.getSuspiciousProcessIds()) {
+                MonitorExamProcess examProcess = new MonitorExamProcess();
+                examProcess.setExamId(exam.getId());
+                examProcess.setProcessId(processId);
+                examProcess.setCreatedAt(now);
+                processList.add(examProcess);
+            }
+            examProcessService.saveBatch(processList);
+        }
+        
+        // 保存域名黑名单关联
+        if (createDTO.getBlacklistDomainIds() != null && !createDTO.getBlacklistDomainIds().isEmpty()) {
+            List<MonitorExamDomain> domainList = new ArrayList<>();
+            for (Integer domainId : createDTO.getBlacklistDomainIds()) {
+                MonitorExamDomain examDomain = new MonitorExamDomain();
+                examDomain.setExamId(exam.getId());
+                examDomain.setDomainId(domainId);
+                examDomain.setCreatedAt(now);
+                domainList.add(examDomain);
+            }
+            examDomainService.saveBatch(domainList);
+        }
+        
+        // 保存风险图片模板关联
+        if (createDTO.getRiskImageIds() != null && !createDTO.getRiskImageIds().isEmpty()) {
+            List<MonitorExamRiskImage> riskImageList = new ArrayList<>();
+            for (Integer riskImageId : createDTO.getRiskImageIds()) {
+                MonitorExamRiskImage examRiskImage = new MonitorExamRiskImage();
+                examRiskImage.setExamId(exam.getId());
+                examRiskImage.setRiskImageId(riskImageId);
+                examRiskImage.setCreatedAt(now);
+                riskImageList.add(examRiskImage);
+            }
+            examRiskImageService.saveBatch(riskImageList);
+        }
+        
+        return R.ok(true);
     }
 
     /**
@@ -145,6 +257,7 @@ public class MonitorExamController {
      * @return 更新结果
      */
     @PutMapping
+    @Transactional
     public R<Boolean> update(@RequestBody ExamUpdateDTO updateDTO) {
         MonitorExam exam = examService.getById(updateDTO.getId());
         if (exam == null) {
@@ -182,7 +295,55 @@ public class MonitorExamController {
         exam.setUpdatedBy(UserInfoContext.get().getUserId());
 
         boolean success = examService.updateById(exam);
-        return success ? R.ok(true) : R.failed("更新失败");
+        if (!success) {
+            return R.failed("更新失败");
+        }
+        
+        // 删除旧的关联关系
+        examProcessService.removeByExamId(exam.getId());
+        examDomainService.removeByExamId(exam.getId());
+        examRiskImageService.removeByExamId(exam.getId());
+        
+        // 保存可疑进程关联
+        if (updateDTO.getSuspiciousProcessIds() != null && !updateDTO.getSuspiciousProcessIds().isEmpty()) {
+            List<MonitorExamProcess> processList = new ArrayList<>();
+            for (Integer processId : updateDTO.getSuspiciousProcessIds()) {
+                MonitorExamProcess examProcess = new MonitorExamProcess();
+                examProcess.setExamId(exam.getId());
+                examProcess.setProcessId(processId);
+                examProcess.setCreatedAt(now);
+                processList.add(examProcess);
+            }
+            examProcessService.saveBatch(processList);
+        }
+        
+        // 保存域名黑名单关联
+        if (updateDTO.getBlacklistDomainIds() != null && !updateDTO.getBlacklistDomainIds().isEmpty()) {
+            List<MonitorExamDomain> domainList = new ArrayList<>();
+            for (Integer domainId : updateDTO.getBlacklistDomainIds()) {
+                MonitorExamDomain examDomain = new MonitorExamDomain();
+                examDomain.setExamId(exam.getId());
+                examDomain.setDomainId(domainId);
+                examDomain.setCreatedAt(now);
+                domainList.add(examDomain);
+            }
+            examDomainService.saveBatch(domainList);
+        }
+        
+        // 保存风险图片模板关联
+        if (updateDTO.getRiskImageIds() != null && !updateDTO.getRiskImageIds().isEmpty()) {
+            List<MonitorExamRiskImage> riskImageList = new ArrayList<>();
+            for (Integer riskImageId : updateDTO.getRiskImageIds()) {
+                MonitorExamRiskImage examRiskImage = new MonitorExamRiskImage();
+                examRiskImage.setExamId(exam.getId());
+                examRiskImage.setRiskImageId(riskImageId);
+                examRiskImage.setCreatedAt(now);
+                riskImageList.add(examRiskImage);
+            }
+            examRiskImageService.saveBatch(riskImageList);
+        }
+        
+        return R.ok(true);
     }
 
     /**
@@ -192,6 +353,7 @@ public class MonitorExamController {
      * @return 删除结果
      */
     @DeleteMapping("/{id}")
+    @Transactional
     public R<Boolean> delete(@PathVariable Integer id) {
         MonitorExam exam = examService.getById(id);
         if (exam == null) {
@@ -202,6 +364,11 @@ public class MonitorExamController {
         if (exam.getStatus() == 1) {
             return R.failed("进行中的考试不允许删除");
         }
+        
+        // 删除关联关系
+        examProcessService.removeByExamId(id);
+        examDomainService.removeByExamId(id);
+        examRiskImageService.removeByExamId(id);
 
         boolean success = examService.removeById(id);
         return success ? R.ok(true) : R.failed("删除失败");

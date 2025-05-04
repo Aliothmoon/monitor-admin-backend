@@ -3,6 +3,7 @@ package com.swust.aliothmoon.model.exam;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 考试视图对象
@@ -52,4 +53,19 @@ public class ExamVO {
      * 创建时间
      */
     private LocalDateTime createdAt;
+    
+    /**
+     * 可疑进程ID列表
+     */
+    private List<Integer> suspiciousProcessIds;
+    
+    /**
+     * 域名黑名单ID列表
+     */
+    private List<Integer> blacklistDomainIds;
+    
+    /**
+     * 风险图片模板ID列表
+     */
+    private List<Integer> riskImageIds;
 } 

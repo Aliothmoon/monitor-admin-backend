@@ -144,4 +144,16 @@ public class SuspiciousProcessController {
         boolean success = suspiciousProcessService.removeById(id);
         return success ? R.ok(true) : R.failed("删除失败");
     }
+
+    /**
+     * 获取所有可疑进程列表（用于下拉选择）
+     *
+     * @return 可疑进程列表
+     */
+    @GetMapping("/list")
+    public R<List<SuspiciousProcessVO>> list() {
+        List<MonitorSuspiciousProcess> processList = suspiciousProcessService.list();
+        List<SuspiciousProcessVO> voList = TransferUtils.toList(processList, SuspiciousProcessVO.class);
+        return R.ok(voList);
+    }
 } 

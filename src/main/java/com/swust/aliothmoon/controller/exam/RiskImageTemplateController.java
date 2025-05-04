@@ -121,6 +121,18 @@ public class RiskImageTemplateController {
     }
 
     /**
+     * 获取所有风险图片模板列表（用于下拉选择）
+     *
+     * @return 风险图片模板列表
+     */
+    @GetMapping("/list")
+    public R<List<RiskImageTemplateVO>> list() {
+        List<MonitorRiskImageTemplate> templateList = riskImageTemplateService.list();
+        List<RiskImageTemplateVO> voList = TransferUtils.toList(templateList, RiskImageTemplateVO.class);
+        return R.ok(voList);
+    }
+
+    /**
      * 添加风险图片模板
      *
      * @param addDTO 添加信息

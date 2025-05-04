@@ -3,6 +3,7 @@ package com.swust.aliothmoon.model.exam;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 考试创建数据传输对象
@@ -37,4 +38,19 @@ public class ExamCreateDTO {
      * 考试时长(分钟)
      */
     private Integer duration;
+    
+    /**
+     * 可疑进程ID列表
+     */
+    private List<Integer> suspiciousProcessIds;
+    
+    /**
+     * 域名黑名单ID列表
+     */
+    private List<Integer> blacklistDomainIds;
+    
+    /**
+     * 风险图片模板ID列表
+     */
+    private List<Integer> riskImageIds;
 } 

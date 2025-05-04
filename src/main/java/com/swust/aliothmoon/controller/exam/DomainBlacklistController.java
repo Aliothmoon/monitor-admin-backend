@@ -103,6 +103,18 @@ public class DomainBlacklistController {
     }
 
     /**
+     * 获取所有域名黑名单列表（用于下拉选择）
+     *
+     * @return 域名黑名单列表
+     */
+    @GetMapping("/list")
+    public R<List<DomainBlacklistVO>> list() {
+        List<MonitorDomainBlacklist> domainList = domainBlacklistService.list();
+        List<DomainBlacklistVO> voList = TransferUtils.toList(domainList, DomainBlacklistVO.class);
+        return R.ok(voList);
+    }
+
+    /**
      * 添加域名黑名单
      *
      * @param addDTO 添加信息
