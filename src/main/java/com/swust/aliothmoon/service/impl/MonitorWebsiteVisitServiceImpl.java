@@ -80,7 +80,8 @@ public class MonitorWebsiteVisitServiceImpl extends ServiceImpl<MonitorWebsiteVi
     @Override
     public List<MonitorWebsiteVisitVO> getRecentWebsiteVisitsByExaminee(Integer examineeAccountId, Integer examId, Integer pageNum, Integer pageSize) {
         QueryWrapper wrapper = QueryWrapper.create().where(MONITOR_WEBSITE_VISIT.EXAMINEE_ACCOUNT_ID.eq(examineeAccountId))
-                .and(MONITOR_WEBSITE_VISIT.EXAM_ID.eq(examId));
+                .and(MONITOR_WEBSITE_VISIT.EXAM_ID.eq(examId))
+                .orderBy(MONITOR_WEBSITE_VISIT.CREATED_AT.desc());
 
         List<MonitorWebsiteVisit> records = page(Page.of(pageNum, pageSize), wrapper).getRecords();
         return TransferUtils.toList(records, MonitorWebsiteVisitVO.class);
