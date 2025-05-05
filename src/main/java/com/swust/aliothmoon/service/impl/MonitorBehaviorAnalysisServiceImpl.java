@@ -31,19 +31,18 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
                 .where(MONITOR_BEHAVIOR_ANALYSIS.EXAMINEE_ACCOUNT_ID.eq(examineeAccountId))
                 .and(MONITOR_BEHAVIOR_ANALYSIS.EXAM_ID.eq(examId))
                 .orderBy(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.desc());
-        
+
         List<MonitorBehaviorAnalysis> behaviorAnalysisList = list(queryWrapper);
         return behaviorAnalysisList.stream().map(this::convertToVO).collect(Collectors.toList());
     }
 
     @Override
-    public List<MonitorBehaviorAnalysisVO> getRecentBehaviorAnalysisByExaminee(Integer examineeAccountId, Integer examId, Integer limit) {
+    public List<MonitorBehaviorAnalysisVO> getRecentBehaviorAnalysisByExaminee(Integer examineeAccountId, Integer examId) {
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .where(MONITOR_BEHAVIOR_ANALYSIS.EXAMINEE_ACCOUNT_ID.eq(examineeAccountId))
                 .and(MONITOR_BEHAVIOR_ANALYSIS.EXAM_ID.eq(examId))
-                .orderBy(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.desc())
-                .limit(limit);
-        
+                .orderBy(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.desc());
+
         List<MonitorBehaviorAnalysis> behaviorAnalysisList = list(queryWrapper);
         return behaviorAnalysisList.stream().map(this::convertToVO).collect(Collectors.toList());
     }
@@ -63,13 +62,13 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
         if (behaviorAnalysis == null) {
             return false;
         }
-        
+
         behaviorAnalysis.setIsProcessed(isProcessed);
         behaviorAnalysis.setProcessResult(processResult);
         behaviorAnalysis.setProcessorId(processorId);
         behaviorAnalysis.setProcessTime(LocalDateTime.now());
         behaviorAnalysis.setUpdatedAt(LocalDateTime.now());
-        
+
         return updateById(behaviorAnalysis);
     }
 
@@ -78,7 +77,7 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .where(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TYPE.eq(eventType))
                 .orderBy(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.desc());
-        
+
         return list(queryWrapper);
     }
 
@@ -87,7 +86,7 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .where(MONITOR_BEHAVIOR_ANALYSIS.LEVEL.eq(level))
                 .orderBy(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.desc());
-        
+
         return list(queryWrapper);
     }
 
@@ -97,7 +96,7 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
                 .where(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.ge(startTime))
                 .and(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.le(endTime))
                 .orderBy(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.desc());
-        
+
         return list(queryWrapper);
     }
 
@@ -106,7 +105,7 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .where(MONITOR_BEHAVIOR_ANALYSIS.EXAM_ID.eq(examId))
                 .orderBy(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TIME.desc());
-        
+
         return list(queryWrapper);
     }
 
@@ -116,10 +115,29 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
                 .where(MONITOR_BEHAVIOR_ANALYSIS.EXAMINEE_ACCOUNT_ID.eq(examineeAccountId))
                 .and(MONITOR_BEHAVIOR_ANALYSIS.EXAM_ID.eq(examId))
                 .and(MONITOR_BEHAVIOR_ANALYSIS.EVENT_TYPE.eq(1)); // 1代表切屏事件
-        
+
         return Math.toIntExact(count(queryWrapper));
     }
-    
+
+    @Override
+    public boolean saveBehaviorAnalysis(Integer examId, Integer examineeAccountId, Integer eventType, String content, String level, LocalDateTime eventTime) {
+        // 创建行为分析记录
+        MonitorBehaviorAnalysis behaviorAnalysis = new MonitorBehaviorAnalysis();
+        behaviorAnalysis.setExamId(examId);
+        behaviorAnalysis.setExamineeAccountId(examineeAccountId);
+        behaviorAnalysis.setEventType(eventType);
+        behaviorAnalysis.setContent(content);
+        behaviorAnalysis.setLevel(level);
+        behaviorAnalysis.setEventTime(eventTime);
+
+        // 设置默认值
+        behaviorAnalysis.setIsProcessed(false);
+        behaviorAnalysis.setCreatedAt(LocalDateTime.now());
+
+        // 保存记录
+        return addBehaviorAnalysis(behaviorAnalysis);
+    }
+
     /**
      * 将实体转换为VO
      */
@@ -127,7 +145,7 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
         if (behaviorAnalysis == null) {
             return null;
         }
-        
+
         MonitorBehaviorAnalysisVO vo = new MonitorBehaviorAnalysisVO();
         vo.setId(behaviorAnalysis.getId());
         vo.setEventType(behaviorAnalysis.getEventType());
@@ -142,7 +160,7 @@ public class MonitorBehaviorAnalysisServiceImpl extends ServiceImpl<MonitorBehav
         vo.setProcessResult(behaviorAnalysis.getProcessResult());
         vo.setProcessTime(behaviorAnalysis.getProcessTime());
         vo.setProcessorId(behaviorAnalysis.getProcessorId());
-        
+
         return vo;
     }
 } 

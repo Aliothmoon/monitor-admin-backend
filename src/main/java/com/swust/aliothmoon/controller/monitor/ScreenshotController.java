@@ -4,6 +4,7 @@ import com.swust.aliothmoon.define.R;
 import com.swust.aliothmoon.entity.MonitorScreenshot;
 import com.swust.aliothmoon.service.MonitorScreenshotService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +30,7 @@ import java.util.UUID;
 public class ScreenshotController {
 
     private final MonitorScreenshotService screenshotService;
-    
+
     // 图片保存路径
     private static final String SCREENSHOT_DIR = "file/screenshots/";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -50,7 +51,7 @@ public class ScreenshotController {
             @RequestParam(required = false) String base64Data,
             @RequestParam(required = false, defaultValue = "false") Boolean hasWarning,
             @RequestParam(required = false) String analysis) {
-        
+
         try {
             MonitorScreenshot screenshot = new MonitorScreenshot();
             screenshot.setExamineeAccountId(accountId);
@@ -58,16 +59,16 @@ public class ScreenshotController {
             screenshot.setCaptureTime(LocalDateTime.now());
             screenshot.setHasWarning(hasWarning);
             screenshot.setAnalysisResult(analysis);
-            
+
             String screenshotUrl = null;
-            
+
             // 处理文件上传
             if (file != null && !file.isEmpty()) {
                 screenshotUrl = saveScreenshotFile(file, accountId, examId);
                 screenshot.setScreenshotUrl(screenshotUrl);
                 // 保持旧字段兼容
                 screenshot.setImageUrl(screenshotUrl);
-            } 
+            }
             // 处理Base64数据
             else if (base64Data != null && !base64Data.isEmpty()) {
                 // 可以选择将Base64存入数据库或保存为文件
@@ -82,10 +83,10 @@ public class ScreenshotController {
             } else {
                 return R.failed("没有提供截图数据");
             }
-            
+
             // 保存截图记录
             boolean success = screenshotService.addScreenshot(screenshot);
-            
+
             if (success) {
                 Map<String, Object> result = new HashMap<>();
                 result.put("id", screenshot.getId());
@@ -95,12 +96,15 @@ public class ScreenshotController {
             } else {
                 return R.failed("保存截图记录失败");
             }
-            
+
         } catch (Exception e) {
             return R.failed("上传截图失败: " + e.getMessage());
         }
     }
-    
+
+    @Value("${fileserver.root}")
+    private String root;
+
     /**
      * 保存截图文件
      *
@@ -113,24 +117,24 @@ public class ScreenshotController {
     private String saveScreenshotFile(MultipartFile file, Integer accountId, Integer examId) throws IOException {
         // 创建目录
         String today = LocalDateTime.now().format(DATE_FORMATTER);
-        String dirPath = SCREENSHOT_DIR + today + "/" + examId + "/" + accountId + "/";
+        String dirPath = root + "/" + today + "/" + examId + "/" + accountId + "/";
         Path directory = Paths.get(dirPath);
         Files.createDirectories(directory);
-        
+
         // 生成文件名
         String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename != null && originalFilename.contains(".") ? 
+        String extension = originalFilename != null && originalFilename.contains(".") ?
                 originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
-        String fileName = UUID.randomUUID().toString() + extension;
-        
+        String fileName = UUID.randomUUID() + extension;
+
         // 保存文件
         Path filePath = directory.resolve(fileName);
         Files.copy(file.getInputStream(), filePath);
-        
+
         // 返回相对URL
         return dirPath + fileName;
     }
-    
+
     /**
      * 将Base64数据保存为文件
      *
@@ -146,27 +150,27 @@ public class ScreenshotController {
         if (data.contains(",")) {
             data = data.split(",")[1];
         }
-        
+
         // 解码Base64数据
         byte[] imageBytes = Base64.getDecoder().decode(data);
-        
+
         // 创建目录
         String today = LocalDateTime.now().format(DATE_FORMATTER);
         String dirPath = SCREENSHOT_DIR + today + "/" + examId + "/" + accountId + "/";
         Path directory = Paths.get(dirPath);
         Files.createDirectories(directory);
-        
+
         // 生成文件名
         String fileName = UUID.randomUUID().toString() + ".jpg";
-        
+
         // 保存文件
         Path filePath = directory.resolve(fileName);
         Files.write(filePath, imageBytes);
-        
+
         // 返回相对URL
         return dirPath + fileName;
     }
-    
+
     /**
      * 删除截图
      *
@@ -179,13 +183,13 @@ public class ScreenshotController {
         if (screenshot == null) {
             return R.failed("截图不存在");
         }
-        
+
         // 删除文件
         String fileUrl = screenshot.getScreenshotUrl();
         if (fileUrl == null || fileUrl.isEmpty()) {
             fileUrl = screenshot.getImageUrl(); // 兼容旧字段
         }
-        
+
         if (fileUrl != null && !fileUrl.isEmpty()) {
             try {
                 Path filePath = Paths.get(fileUrl);
@@ -197,7 +201,7 @@ public class ScreenshotController {
                 System.err.println("删除截图文件失败: " + e.getMessage());
             }
         }
-        
+
         // 删除数据库记录
         boolean success = screenshotService.removeById(id);
         return R.ok(success);

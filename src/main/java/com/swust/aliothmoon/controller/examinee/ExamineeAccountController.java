@@ -1,6 +1,7 @@
 package com.swust.aliothmoon.controller.examinee;
 
 import com.mybatisflex.core.paginate.Page;
+import com.swust.aliothmoon.context.ExamineeAccountContext;
 import com.swust.aliothmoon.context.UserInfoContext;
 import com.swust.aliothmoon.define.R;
 import com.swust.aliothmoon.define.TableDataInfo;
@@ -65,7 +66,13 @@ public class ExamineeAccountController {
     @GetMapping("/info")
     public R<ExamineeInfoVO> getExamineeInfo() {
         // 从上下文中获取考生账号ID
-        Integer accountId = UserInfoContext.get().getUserId();
+
+        ExamineeAccount account = ExamineeAccountContext.get();
+        if(account == null){
+            return R.failed("考生未登录");
+        }
+
+        Integer accountId = account.getAccountId();
         if (accountId == null) {
             return R.failed("未登录");
         }

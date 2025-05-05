@@ -18,11 +18,21 @@ public interface MonitorScreenshotService extends IService<MonitorScreenshot> {
      * 获取考生屏幕截图记录
      *
      * @param examineeAccountId 考生账号ID
-     * @param examId 考试ID
-     * @param limit 限制数量，0表示不限制
+     * @param examId            考试ID
      * @return 屏幕截图记录列表
      */
-    List<MonitorScreenshotVO> getScreenshotsByExaminee(Integer examineeAccountId, Integer examId, Integer limit);
+    List<MonitorScreenshotVO> getScreenshotsByExaminee(Integer examineeAccountId, Integer examId);
+    
+    /**
+     * 获取考生屏幕截图记录（分页）
+     *
+     * @param examineeAccountId 考生账号ID
+     * @param examId            考试ID
+     * @param pageNum           页码
+     * @param pageSize          每页大小
+     * @return 屏幕截图记录列表
+     */
+    List<MonitorScreenshotVO> getScreenshotsByExaminee(Integer examineeAccountId, Integer examId, Integer pageNum, Integer pageSize);
     
     /**
      * 获取考生最新一张屏幕截图
@@ -32,6 +42,15 @@ public interface MonitorScreenshotService extends IService<MonitorScreenshot> {
      * @return 屏幕截图记录
      */
     MonitorScreenshotVO getLatestScreenshotByExaminee(Integer examineeAccountId, Integer examId);
+    
+    /**
+     * 统计考生截图数量
+     *
+     * @param examineeAccountId 考生账号ID
+     * @param examId 考试ID
+     * @return 截图数量
+     */
+    Integer countScreenshotsByExaminee(Integer examineeAccountId, Integer examId);
     
     /**
      * 添加考生屏幕截图记录
@@ -73,4 +92,15 @@ public interface MonitorScreenshotService extends IService<MonitorScreenshot> {
      * @return 截图列表
      */
     List<MonitorScreenshot> listByStudentId(Integer studentId);
+    
+    /**
+     * 保存考生屏幕截图
+     *
+     * @param examId 考试ID
+     * @param examineeAccountId 考生账号ID
+     * @param captureTime 截图时间
+     * @param screenshotUrl 截图文件路径
+     * @return 是否成功
+     */
+    boolean saveScreenshot(Integer examId, Integer examineeAccountId, LocalDateTime captureTime, String screenshotUrl);
 } 

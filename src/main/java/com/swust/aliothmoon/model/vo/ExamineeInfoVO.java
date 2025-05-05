@@ -25,4 +25,9 @@ public class ExamineeInfoVO {
      * 考生个人信息
      */
     private ExamineeInfo examineeInfo;
+    
+    /**
+     * 考试详情信息
+     */
+    private ExamDetailsVO examDetails;
 } 

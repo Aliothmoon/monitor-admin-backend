@@ -8,16 +8,19 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.swust.aliothmoon.define.TableDataInfo;
 import com.swust.aliothmoon.entity.ExamineeAccount;
 import com.swust.aliothmoon.entity.ExamineeInfo;
+import com.swust.aliothmoon.entity.MonitorExam;
 import com.swust.aliothmoon.entity.table.ExamineeAccountTableDef;
 import com.swust.aliothmoon.entity.table.ExamineeInfoTableDef;
 import com.swust.aliothmoon.mapper.ExamineeAccountMapper;
 import com.swust.aliothmoon.model.dto.ExamineeLoginDTO;
 import com.swust.aliothmoon.model.dto.PageInfo;
+import com.swust.aliothmoon.model.vo.ExamDetailsVO;
 import com.swust.aliothmoon.model.vo.ExamineeAccountWithInfoVO;
 import com.swust.aliothmoon.model.vo.ExamineeInfoVO;
 import com.swust.aliothmoon.model.vo.ExamineeLoginVO;
 import com.swust.aliothmoon.service.ExamineeAccountService;
 import com.swust.aliothmoon.service.ExamineeInfoService;
+import com.swust.aliothmoon.service.MonitorExamService;
 import com.swust.aliothmoon.utils.CryptoUtils;
 import com.swust.aliothmoon.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,8 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static com.swust.aliothmoon.constant.Keys.CANDIDATE_TOKEN;
 
@@ -45,6 +50,9 @@ public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMappe
     @Lazy
     @Autowired
     private ExamineeInfoService examineeInfoService;
+    @Lazy
+    @Autowired
+    private MonitorExamService examService;
 
     @Override
     public String generateAccountByStudentId(Integer examId, String studentId) {
@@ -69,7 +77,7 @@ public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMappe
         }
 
         // 验证密码
-        if (!CryptoUtils.verifyPassword(password, accountEntity.getPassword())) {
+        if (!Objects.equals(password, accountEntity.getPassword())) {
             return null;
         }
 
@@ -87,7 +95,7 @@ public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMappe
         }
 
         String key = Ksuid.newKsuid().asRaw();
-        RedisUtils.set(CANDIDATE_TOKEN.apply(key), examineeAccount);
+        RedisUtils.set(CANDIDATE_TOKEN.apply(key), examineeAccount,1, TimeUnit.DAYS);
 
         return key;
     }
@@ -151,6 +159,36 @@ public class ExamineeAccountServiceImpl extends ServiceImpl<ExamineeAccountMappe
         infoVO.setAccount(account);
         infoVO.setExamId(account.getExamId());
         infoVO.setExamineeInfo(examineeInfo);
+        
+        // 获取考试详情
+        if (account.getExamId() != null) {
+            MonitorExam exam = examService.getById(account.getExamId());
+            if (exam != null) {
+                ExamDetailsVO examDetailsVO = new ExamDetailsVO();
+                examDetailsVO.setId(exam.getId());
+                examDetailsVO.setName(exam.getName());
+                examDetailsVO.setDescription(exam.getDescription());
+                examDetailsVO.setStartTime(exam.getStartTime());
+                examDetailsVO.setEndTime(exam.getEndTime());
+                examDetailsVO.setDuration(exam.getDuration());
+                examDetailsVO.setLocation(exam.getLocation());
+                examDetailsVO.setStatus(exam.getStatus());
+                
+                // 设置当前服务器时间
+                LocalDateTime now = LocalDateTime.now();
+                examDetailsVO.setServerTime(now);
+                
+                // 计算考试剩余时间（秒）
+                if (now.isBefore(exam.getEndTime())) {
+                    long remainingSeconds = java.time.Duration.between(now, exam.getEndTime()).getSeconds();
+                    examDetailsVO.setRemainingTime(remainingSeconds);
+                } else {
+                    examDetailsVO.setRemainingTime(0L);
+                }
+                
+                infoVO.setExamDetails(examDetailsVO);
+            }
+        }
 
         return infoVO;
     }

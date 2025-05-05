@@ -1,5 +1,6 @@
 package com.swust.aliothmoon.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.github.ksuid.Ksuid;
 import com.swust.aliothmoon.constant.ErrorCode;
 import com.swust.aliothmoon.context.TokenHeaderContext;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import static com.swust.aliothmoon.constant.Keys.TOKEN;
 import static com.swust.aliothmoon.constant.UserRoleConstant.ADMIN;
 import static com.swust.aliothmoon.constant.UserRoleConstant.INVIGILATOR;
+import static com.swust.aliothmoon.context.UserInfoContext.ONLINE_CACHE;
 import static com.swust.aliothmoon.entity.table.MonitorUserTableDef.MONITOR_USER;
 import static com.swust.aliothmoon.utils.MiscUtils.in;
 
@@ -75,6 +77,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         return R.ok(userInfo);
     }
 
+
     @Override
     public R<String> login(LoginTuple info) {
         MonitorUser user = userService.queryChain().where(
@@ -98,6 +101,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         LoggedInUserInfo val = TransferUtils.to(user, LoggedInUserInfo.class);
         RedisUtils.set(TOKEN.apply(key), val, 1, TimeUnit.DAYS);
 
+
         return R.ok(key);
     }
 
@@ -106,6 +110,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         String val = TokenHeaderContext.get();
         if (val != null) {
             RedisUtils.delete(TOKEN.apply(val));
+        }
+        LoggedInUserInfo info = UserInfoContext.get();
+        if (info != null) {
+            ONLINE_CACHE.remove(StrUtil.toString(info.getUserId()));
         }
         return true;
     }

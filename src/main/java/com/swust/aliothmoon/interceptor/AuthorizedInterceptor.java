@@ -4,8 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
 import com.alibaba.fastjson2.JSON;
 import com.swust.aliothmoon.constant.ErrorCode;
+import com.swust.aliothmoon.context.ExamineeAccountContext;
 import com.swust.aliothmoon.context.TokenHeaderContext;
 import com.swust.aliothmoon.context.UserInfoContext;
+import com.swust.aliothmoon.entity.ExamineeAccount;
 import com.swust.aliothmoon.interceptor.define.MatchedHandlerInterceptor;
 import com.swust.aliothmoon.model.user.LoggedInUserInfo;
 import com.swust.aliothmoon.utils.RedisUtils;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.swust.aliothmoon.constant.Keys.CANDIDATE_TOKEN;
 import static com.swust.aliothmoon.constant.Keys.TOKEN;
 
 @Slf4j
@@ -39,6 +42,13 @@ public class AuthorizedInterceptor implements MatchedHandlerInterceptor {
                 TokenHeaderContext.set(key);
                 return true;
             }
+            ExamineeAccount account = RedisUtils.getVal(CANDIDATE_TOKEN.apply(key), ExamineeAccount.class);
+            if (account != null) {
+                ExamineeAccountContext.set(account);
+                return true;
+            }
+
+
         }
 
         String resp = JSON.toJSONString(ErrorCode.NO_AUTHORITY.warp());
@@ -61,6 +71,11 @@ public class AuthorizedInterceptor implements MatchedHandlerInterceptor {
 
     @Override
     public List<String> excludes() {
-        return List.of("/user/login", "/user/logout", "/ws/monitor/**");
+        return List.of(
+                "/user/login",
+                "/user/logout",
+                "/ws/monitor/**",
+                "/examinee/account/login"
+        );
     }
 }

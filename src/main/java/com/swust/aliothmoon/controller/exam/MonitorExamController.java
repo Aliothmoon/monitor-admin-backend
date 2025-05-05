@@ -527,9 +527,9 @@ public class MonitorExamController {
     @Transactional
     public R<Boolean> updateExamExamineeAccount(@RequestBody Map<String, Object> requestMap) {
         // 根据请求参数确定更新类型
-        if (requestMap.containsKey("id")) {
+        if (requestMap.containsKey("accountId")) {
             // 更新现有账号
-            Integer accountId = (Integer) requestMap.get("id");
+            Integer accountId = (Integer) requestMap.get("accountId");
             String account = (String) requestMap.get("account");
             String password = (String) requestMap.get("password");
 

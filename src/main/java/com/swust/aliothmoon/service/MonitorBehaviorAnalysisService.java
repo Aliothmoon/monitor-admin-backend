@@ -27,11 +27,10 @@ public interface MonitorBehaviorAnalysisService extends IService<MonitorBehavior
      * 获取考生最近的行为分析记录
      *
      * @param examineeAccountId 考生账号ID
-     * @param examId 考试ID
-     * @param limit 限制数量
+     * @param examId            考试ID
      * @return 行为分析记录列表
      */
-    List<MonitorBehaviorAnalysisVO> getRecentBehaviorAnalysisByExaminee(Integer examineeAccountId, Integer examId, Integer limit);
+    List<MonitorBehaviorAnalysisVO> getRecentBehaviorAnalysisByExaminee(Integer examineeAccountId, Integer examId);
     
     /**
      * 添加行为分析记录
@@ -93,4 +92,17 @@ public interface MonitorBehaviorAnalysisService extends IService<MonitorBehavior
      * @return 切屏次数
      */
     Integer countSwitchScreens(Integer examineeAccountId, Integer examId);
+    
+    /**
+     * 保存考生行为分析记录
+     *
+     * @param examId 考试ID
+     * @param examineeAccountId 考生账号ID
+     * @param eventType 事件类型
+     * @param content 内容描述
+     * @param level 风险等级
+     * @param eventTime 事件时间
+     * @return 是否成功
+     */
+    boolean saveBehaviorAnalysis(Integer examId, Integer examineeAccountId, Integer eventType, String content, String level, LocalDateTime eventTime);
 } 

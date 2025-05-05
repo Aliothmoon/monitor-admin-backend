@@ -14,6 +14,7 @@ import com.swust.aliothmoon.service.MonitorUserService;
 import com.swust.aliothmoon.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -143,6 +144,15 @@ public class MonitorUserController {
     @PutMapping("updateMonitorUser")
     public boolean updateMonitorUser(@RequestBody MonitorUser monitorUser) {
         monitorUser.setUpdatedAt(LocalDateTime.now());
+        
+        // 如果密码不为空，则加密密码
+        if (StringUtils.hasText(monitorUser.getPassword())) {
+            monitorUser.setPassword(CryptoUtils.hashPassword(monitorUser.getPassword()));
+        } else {
+            // 如果密码为空，不更新密码字段
+            monitorUser.setPassword(null);
+        }
+        
         return monitorUserService.updateById(monitorUser);
     }
 

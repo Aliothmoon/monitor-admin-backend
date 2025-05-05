@@ -27,11 +27,21 @@ public interface MonitorWebsiteVisitService extends IService<MonitorWebsiteVisit
      * 获取考生最近的网站访问记录
      *
      * @param examineeAccountId 考生账号ID
-     * @param examId 考试ID
-     * @param limit 限制数量
+     * @param examId            考试ID
      * @return 网站访问记录列表
      */
-    List<MonitorWebsiteVisitVO> getRecentWebsiteVisitsByExaminee(Integer examineeAccountId, Integer examId, Integer limit);
+    List<MonitorWebsiteVisitVO> getRecentWebsiteVisitsByExaminee(Integer examineeAccountId, Integer examId);
+    
+    /**
+     * 获取考生最近的网站访问记录（分页）
+     *
+     * @param examineeAccountId 考生账号ID
+     * @param examId            考试ID
+     * @param pageNum           页码
+     * @param pageSize          每页大小
+     * @return 网站访问记录列表
+     */
+    List<MonitorWebsiteVisitVO> getRecentWebsiteVisitsByExaminee(Integer examineeAccountId, Integer examId, Integer pageNum, Integer pageSize);
     
     /**
      * 添加网站访问记录
@@ -82,4 +92,16 @@ public interface MonitorWebsiteVisitService extends IService<MonitorWebsiteVisit
      * @return 访问网站总数
      */
     Integer countWebsiteVisits(Integer examineeAccountId, Integer examId);
+    
+    /**
+     * 保存考生网站访问记录
+     *
+     * @param examId 考试ID
+     * @param examineeAccountId 考生账号ID
+     * @param url 访问的URL
+     * @param title 网页标题
+     * @param visitTime 访问时间
+     * @return 是否成功
+     */
+    boolean saveWebsiteVisit(Integer examId, Integer examineeAccountId, String url, String title, LocalDateTime visitTime);
 } 

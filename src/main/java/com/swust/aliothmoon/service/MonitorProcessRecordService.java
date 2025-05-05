@@ -6,6 +6,7 @@ import com.swust.aliothmoon.model.vo.MonitorProcessRecordVO;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 考生进程记录服务接口
@@ -27,11 +28,21 @@ public interface MonitorProcessRecordService extends IService<MonitorProcessReco
      * 获取考生最近的进程记录
      *
      * @param examineeAccountId 考生账号ID
-     * @param examId 考试ID
-     * @param limit 限制数量
+     * @param examId            考试ID
      * @return 进程记录列表
      */
-    List<MonitorProcessRecordVO> getRecentProcessRecordsByExaminee(Integer examineeAccountId, Integer examId, Integer limit);
+    List<MonitorProcessRecordVO> getRecentProcessRecordsByExaminee(Integer examineeAccountId, Integer examId);
+    
+    /**
+     * 获取考生最近的进程记录（带分页）
+     *
+     * @param examineeAccountId 考生账号ID
+     * @param examId            考试ID 
+     * @param pageNum           页码
+     * @param pageSize          每页大小
+     * @return 进程记录列表
+     */
+    List<MonitorProcessRecordVO> getRecentProcessRecordsByExaminee(Integer examineeAccountId, Integer examId, Integer pageNum, Integer pageSize);
     
     /**
      * 添加进程记录
@@ -91,4 +102,15 @@ public interface MonitorProcessRecordService extends IService<MonitorProcessReco
      * @return 进程总数
      */
     Integer countProcessRecords(Integer examineeAccountId, Integer examId);
+    
+    /**
+     * 保存考生进程记录
+     *
+     * @param examId 考试ID
+     * @param examineeAccountId 考生账号ID
+     * @param processes 进程列表
+     * @param recordTime 记录时间
+     * @return 是否成功
+     */
+    boolean saveProcessRecords(Integer examId, Integer examineeAccountId, List<Map<String, Object>> processes, LocalDateTime recordTime);
 } 

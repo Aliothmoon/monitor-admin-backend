@@ -28,7 +28,6 @@ public class DurationUtils {
     }
 
     public static String getPauseTimeLeft(LocalDateTime pauseStart, Integer pauseMinutes) {
-        // 将暂停开始时间转换为中国上海时区的ZonedDateTime对象
         ZonedDateTime pauseStartTime = ZonedDateTime.of(pauseStart, SHANGHAI_ZONE);
 
         // 计算暂停结束时间
